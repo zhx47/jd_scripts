@@ -98,7 +98,7 @@ let args_xh = {
      * 例如是18件，将会进行第三次获取，直到过滤完毕后为20件才会停止，不建议设置太大
      * 可设置环境变量：JD_TRY_MAXLENGTH
      * */
-    maxLength: process.env.JD_TRY_MAXLENGTH * 1 || 50, /*
+    maxLength: process.env.JD_TRY_MAXLENGTH * 1 || 20, /*
      * 过滤种草官类试用，某些试用商品是专属官专属，考虑到部分账号不是种草官账号
      * 例如A商品是种草官专属试用商品，下面设置为true，而你又不是种草官账号，那A商品将不会被添加到待提交试用组
      * 例如B商品是种草官专属试用商品，下面设置为false，而你是种草官账号，那A商品将会被添加到待提交试用组
@@ -196,8 +196,8 @@ let args_xh = {
                         await try_feedsList(args_xh.tabId[$.nowTabIdIndex], $.nowPage); //获取对应tabId的试用页面
                     }
                     if (trialActivityIdList.length < args_xh.maxLength) {
-                        console.log(`间隔等待中，请等待5秒 \n`);
-                        await $.wait(5000);
+                        console.log(`间隔等待中，请等待7秒 \n`);
+                        await $.wait(7000);
                     }
                 }
                 if ($.isForbidden === false && $.isLimit === false) {
