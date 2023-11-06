@@ -134,8 +134,7 @@ let args_xh = {
 
 !(async () => {
     await $.wait(500);
-    //   if (process.env.JD_TRY && process.env.JD_TRY === "true") {
-    if ("true" === "true") {
+    if (process.env.JD_TRY && process.env.JD_TRY === "true") {
         $.log("\n遇到问题请先看脚本内注释；解决不了可联系https://t.me/dylan_jdpro\n");
         await requireConfig();
         if (!$.cookiesArr[0]) {
@@ -196,8 +195,8 @@ let args_xh = {
                         await try_feedsList(args_xh.tabId[$.nowTabIdIndex], $.nowPage); //获取对应tabId的试用页面
                     }
                     if (trialActivityIdList.length < args_xh.maxLength) {
-                        console.log(`间隔等待中，请等待7秒 \n`);
-                        await $.wait(7000);
+                        console.log(`间隔等待中，请等待5秒 \n`);
+                        await $.wait(5000);
                     }
                 }
                 if ($.isForbidden === false && $.isLimit === false) {
@@ -213,8 +212,8 @@ let args_xh = {
                             break;
                         }
                         await try_apply(trialActivityTitleList[i], trialActivityIdList[i]);
-                        console.log(`间隔等待中，请等待20秒，容易403 \n`);
-                        await $.wait(20000);
+                        console.log(`间隔等待中，请等待15秒 \n`);
+                        await $.wait(15000);
                     }
                     console.log("试用申请执行完毕...");
                     // await try_MyTrials(1, 1)    //申请中的商品
@@ -532,15 +531,13 @@ async function taskurl_xh(appid, functionId, body = JSON.stringify({})) {
     var requestBody = {
         functionId: functionId, body: body, appid: appid,
     };
-
     let h5ststr = geth5st(requestBody);
-
     const joylog = CryptoJS.MD5(body, "newtryundefinedundefinedtry_applyundefined").toString().concat("*").concat(undefined); // 一个简易的，不通用的log
 
     return {
         url: `${URL}?appid=${appid}&functionId=${functionId}&body=${encodeURIComponent(body)}&h5st=${h5ststr}&joylog=${joylog}&area=&uuid=0326636623568363-6366565616634613`,
         headers: {
-            Cookie: $.cookie + getBaseCookie(),
+            Cookie: $.cookie + getBaseCookie($.userAgent, "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html"),
             "User-Agent": $.userAgent,
             accept: "application/json, text/plain, */*",
             "Accept-Encoding": "gzip, deflate, br",
