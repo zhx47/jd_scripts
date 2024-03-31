@@ -896,6 +896,11 @@ function Env(name, opts) {
             this.cktough = this.cktough ? this.cktough : require("tough-cookie");
             this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
             if (opts) {
+                const proxyUrl = 'http://127.0.0.1:3128';
+                opts.agent = {
+                    http: proxyUrl,
+                    https: proxyUrl,
+                }
                 opts.headers = opts.headers ? opts.headers : {};
                 if (undefined === opts.headers.Cookie && undefined === opts.cookieJar) {
                     opts.cookieJar = this.ckjar;
