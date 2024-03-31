@@ -1,7 +1,7 @@
 /**
  * 京东试用， 只是一个DEMO
  */
-const {h5st} = require("./h5st3.1_lite");
+const {h5st} = require("./h5st4.4_lite");
 const CryptoJS = require("crypto-js");
 const {getBaseCookie} = require("./baseCookie");
 
@@ -303,7 +303,7 @@ async function try_feedsList(tabId, page) {
         tabId: `${tabId + ""}`, page: page, version: 2, source: "default", client: "outer",
     });
 
-    let option = await taskurl_xh("newtry", "try_SpecFeedList", body);
+    let option = await taskurl_xh("newtry", "try_SpecFeedList", body, 61);
     await $.post(option, (err, resp, data) => {
         try {
             if (err) {
@@ -426,7 +426,7 @@ async function try_apply(title, activityId) {
         activityId: `${activityId * 1}`,
     });
 
-    let option = await taskurl_xh("newtry", "try_apply", body);
+    let option = await taskurl_xh("newtry", "try_apply", body, 59);
     await $.post(option, (err, resp, data) => {
         try {
             if (err) {
@@ -527,11 +527,11 @@ function try_MyTrials(page, selected) {
     });
 }
 
-async function taskurl_xh(appid, functionId, body = JSON.stringify({})) {
+async function taskurl_xh(appid, functionId, body = JSON.stringify({}), childElementCount) {
     var requestBody = {
         functionId: functionId, body: body, appid: appid,
     };
-    let h5ststr = geth5st(requestBody);
+    let h5ststr = geth5st(requestBody, childElementCount);
     const joylog = CryptoJS.MD5(body, "newtryundefinedundefinedtry_applyundefined").toString().concat("*").concat(undefined); // 一个简易的，不通用的log
 
     return {
@@ -623,8 +623,9 @@ function totalBean() {
     });
 }
 
-function geth5st(body) {
+function geth5st(body, childElementCount) {
     // console.log(body);
+    $.h5stObj.childElementCount = childElementCount
     var h5stResult = $.h5stObj.sign(body);
     // console.log(h5stResult);
     return h5stResult && h5stResult.h5st ? h5stResult.h5st : null;
