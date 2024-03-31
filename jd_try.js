@@ -2,8 +2,12 @@
  * 京东试用， 只是一个DEMO
  */
 const {h5st} = require("./h5st4.4_lite");
-const CryptoJS = require("crypto-js");
 const {getBaseCookie} = require("./baseCookie");
+const CryptoJS = require("crypto-js");
+const {wrapper} = require("axios-cookiejar-support");
+const {CookieJar} = require("tough-cookie");
+const axios = require("axios");
+const qs = require('qs');
 
 const $ = new Env("京东试用");
 const URL = "https://api.m.jd.com/client.action";
@@ -98,7 +102,7 @@ let args_xh = {
      * 例如是18件，将会进行第三次获取，直到过滤完毕后为20件才会停止，不建议设置太大
      * 可设置环境变量：JD_TRY_MAXLENGTH
      * */
-    maxLength: process.env.JD_TRY_MAXLENGTH * 1 || 20, /*
+    maxLength: process.env.JD_TRY_MAXLENGTH * 1 || 1, /*
      * 过滤种草官类试用，某些试用商品是专属官专属，考虑到部分账号不是种草官账号
      * 例如A商品是种草官专属试用商品，下面设置为true，而你又不是种草官账号，那A商品将不会被添加到待提交试用组
      * 例如B商品是种草官专属试用商品，下面设置为false，而你是种草官账号，那A商品将会被添加到待提交试用组
@@ -134,116 +138,112 @@ let args_xh = {
 
 !(async () => {
     await $.wait(500);
-    if (process.env.JD_TRY && process.env.JD_TRY === "true") {
-        $.log("\n遇到问题请先看脚本内注释；解决不了可联系https://t.me/dylan_jdpro\n");
-        await requireConfig();
-        if (!$.cookiesArr[0]) {
-            $.msg($.name, "【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取", "https://bean.m.jd.com/", {
-                "open-url": "https://bean.m.jd.com/",
-            });
-            return;
-        }
-        args_xh.tabId = args_xh.tabId.sort(() => 0.5 - Math.random());
-        for (let i = 0; i < args_xh.try_num; i++) {
-            if ($.cookiesArr[i]) {
-                $.cookie = $.cookiesArr[i];
-                $.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1]);
-                $.index = i + 1;
-                $.isLogin = true;
-                $.nickName = "";
-                $.userAgent = $.isNode() ? process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : require("./USER_AGENTS").USER_AGENT : $.getdata("JDUA") ? $.getdata("JDUA") : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1";
+    $.log("\n遇到问题请先看脚本内注释；解决不了可联系https://t.me/dylan_jdpro\n");
+    await requireConfig();
+    if (!$.cookiesArr[0]) {
+        $.msg($.name, "【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取", "https://bean.m.jd.com/", {
+            "open-url": "https://bean.m.jd.com/",
+        });
+        return;
+    }
+    args_xh.tabId = args_xh.tabId.sort(() => 0.5 - Math.random());
+    for (let i = 0; i < args_xh.try_num; i++) {
+        if ($.cookiesArr[i]) {
+            $.cookie = $.cookiesArr[i];
+            $.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1]);
+            $.index = i + 1;
+            $.isLogin = true;
+            $.nickName = "";
+            $.userAgent = $.isNode() ? process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : require("./USER_AGENTS").USER_AGENT : $.getdata("JDUA") ? $.getdata("JDUA") : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1";
 
-                await totalBean();
-                console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
-                $.except = false;
-                if (args_xh.except.includes($.UserName)) {
-                    console.log(`跳过账号：${$.nickName || $.UserName}`);
-                    $.except = true;
-                    continue;
-                }
-                if (!$.isLogin) {
-                    $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {
-                        "open-url": "https://bean.m.jd.com/bean/signIndex.action",
-                    });
-                    await $.notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-                    continue;
-                }
+            await totalBean();
+            console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
+            $.except = false;
+            if (args_xh.except.includes($.UserName)) {
+                console.log(`跳过账号：${$.nickName || $.UserName}`);
+                $.except = true;
+                continue;
+            }
+            if (!$.isLogin) {
+                $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {
+                    "open-url": "https://bean.m.jd.com/bean/signIndex.action",
+                });
+                await $.notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+                continue;
+            }
 
-                $.h5stObj = new h5st($.cookie, $.userAgent, {
-                    appId: "35fa0", debug: false, preRequest: false
-                }, "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html?ids=501188849%2C501197994&tttparams=gH3GMeyJhZGRyZXNzSWQiOjI3NDc0NTQ0MzksImRMYXQiOjAsImRMbmciOjAsImdMYXQiOiIyOS44MDY0NzQiLCJnTG5nIjoiMTIxLjU0MDQ3IiwiZ3BzX2FyZWEiOiIwXzBfMF8wIiwibGF0IjowLCJsbmciOjAsIm1vZGVsIjoiU00tRzk5ODAiLCJwb3NMYXQiOiIyOS44MDY0NzQiLCJwb3NMbmciOiIxMjEuNTQwNDciLCJwcnN0YXRlIjoiMCIsInVlbXBzIjoiMC0wLTIiLCJ1bl9hcmVhIjoiMTVfMTE1OF80NjM0M181OTM3Ny5J9&preventPV=1&forceCurrentView=1");
-                $.totalTry = 0;
-                $.totalSuccess = 0;
-                $.nowTabIdIndex = 0;
-                $.nowPage = 1;
-                $.nowItem = 1;
-                $.retrynum = 0;
-                if (!args_xh.unified) {
-                    trialActivityIdList = [];
-                    trialActivityTitleList = [];
-                }
-                $.isLimit = false;
-                $.isForbidden = false;
-                $.wrong = false;
-                size = 1;
+            $.h5stObj = new h5st($.cookie, $.userAgent, {
+                appId: "35fa0", debug: false
+            }, "https://h5static.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html?ids=501730512%252C501676150&navh=49&stath=37&tttparams=wUQ86eyJhZGRyZXNzSWQiOjAsImRMYXQiOjAsImRMbmciOjAsImdMYXQiOiIzOS45NDQwOTMiLCJnTG5nIjoiMTE2LjQ4MjI3NiIsImdwc19hcmVhIjoiMF8wXzBfMCIsImxhdCI6MCwibG5nIjowLCJtb2RlbCI6IlJlZG1pIE5vdGUgMTJUIFBybyIsInBvc0xhdCI6IjM5Ljk0NDA5MyIsInBvc0xuZyI6IjExNi40ODIyNzYiLCJwcnN0YXRlIjoiMCIsInVlbXBzIjoiMC0wLTAiLCJ1bl9hcmVhIjoiMV83Ml81NTY3NF8wIn50%253D&preventPV=1&forceCurrentView=1&redirectCode=501");
+            $.totalTry = 0;
+            $.totalSuccess = 0;
+            $.nowTabIdIndex = 0;
+            $.nowPage = 1;
+            $.nowItem = 1;
+            $.retrynum = 0;
+            if (!args_xh.unified) {
+                trialActivityIdList = [];
+                trialActivityTitleList = [];
+            }
+            $.isLimit = false;
+            $.isForbidden = false;
+            $.wrong = false;
+            size = 1;
 
-                while (trialActivityIdList.length < args_xh.maxLength && $.retrynum < 3) {
-                    if ($.nowTabIdIndex === args_xh.tabId.length) {
-                        console.log(`tabId组已遍历完毕，不在获取商品\n`);
-                        break;
-                    } else {
-                        await try_feedsList(args_xh.tabId[$.nowTabIdIndex], $.nowPage); //获取对应tabId的试用页面
-                    }
-                    if (trialActivityIdList.length < args_xh.maxLength) {
-                        console.log(`间隔等待中，请等待5秒 \n`);
-                        await $.wait(5000);
-                    }
+            while (trialActivityIdList.length < args_xh.maxLength && $.retrynum < 3) {
+                if ($.nowTabIdIndex === args_xh.tabId.length) {
+                    console.log(`tabId组已遍历完毕，不在获取商品\n`);
+                    break;
+                } else {
+                    await try_feedsList(args_xh.tabId[$.nowTabIdIndex], $.nowPage); //获取对应tabId的试用页面
                 }
-                if ($.isForbidden === false && $.isLimit === false) {
-                    console.log(`稍后将执行试用申请，请等待 5 秒\n`);
+                if (trialActivityIdList.length < args_xh.maxLength) {
+                    console.log(`间隔等待中，请等待5秒 \n`);
                     await $.wait(5000);
-                    for (let i = 0; i < trialActivityIdList.length && $.isLimit === false; i++) {
-                        if ($.isLimit) {
-                            console.log("试用上限");
-                            break;
-                        }
-                        if ($.isForbidden) {
-                            console.log("403了，跳出");
-                            break;
-                        }
-                        await try_apply(trialActivityTitleList[i], trialActivityIdList[i]);
-                        console.log(`间隔等待中，请等待15秒 \n`);
-                        await $.wait(15000);
-                    }
-                    console.log("试用申请执行完毕...");
-                    // await try_MyTrials(1, 1)    //申请中的商品
-                    $.giveupNum = 0;
-                    $.successNum = 0;
-                    $.getNum = 0;
-                    $.completeNum = 0;
-                    await try_MyTrials(1, 2); //申请成功的商品
-                    // await try_MyTrials(1, 3)    //申请失败的商品
-                    await showMsg();
                 }
             }
-            if ($.isNode()) {
-                if ($.index % args_xh.sendNum === 0) {
-                    $.sentNum++;
-                    console.log(`正在进行第 ${$.sentNum} 次发送通知，发送数量：${args_xh.sendNum}`);
-                    await $.notify.sendNotify(`${$.name}`, `${notifyMsg}`);
-                    notifyMsg = "";
+            if ($.isForbidden === false && $.isLimit === false) {
+                console.log(`稍后将执行试用申请，请等待 5 秒\n`);
+                await $.wait(5000);
+                for (let i = 0; i < trialActivityIdList.length && $.isLimit === false; i++) {
+                    if ($.isLimit) {
+                        console.log("试用上限");
+                        break;
+                    }
+                    if ($.isForbidden) {
+                        console.log("403了，跳出");
+                        break;
+                    }
+                    await try_apply(trialActivityTitleList[i], trialActivityIdList[i]);
+                    console.log(`间隔等待中，请等待15秒 \n`);
+                    await $.wait(15000);
                 }
+                console.log("试用申请执行完毕...");
+                // await try_MyTrials(1, 1)    //申请中的商品
+                $.giveupNum = 0;
+                $.successNum = 0;
+                $.getNum = 0;
+                $.completeNum = 0;
+                await try_MyTrials(1, 2); //申请成功的商品
+                // await try_MyTrials(1, 3)    //申请失败的商品
+                await showMsg();
             }
         }
-        if ($.isNode() && $.except === false) {
-            if ($.cookiesArr.length - $.sentNum * args_xh.sendNum < args_xh.sendNum && notifyMsg.length != 0) {
-                console.log(`正在进行最后一次发送通知，发送数量：${$.cookiesArr.length - $.sentNum * args_xh.sendNum}`);
+        if ($.isNode()) {
+            if ($.index % args_xh.sendNum === 0) {
+                $.sentNum++;
+                console.log(`正在进行第 ${$.sentNum} 次发送通知，发送数量：${args_xh.sendNum}`);
                 await $.notify.sendNotify(`${$.name}`, `${notifyMsg}`);
                 notifyMsg = "";
             }
         }
-    } else {
-        console.log(`\n您未设置变量export JD_TRY="true"运行【京东试用】脚本, 结束运行！\n`);
+    }
+    if ($.isNode() && $.except === false) {
+        if ($.cookiesArr.length - $.sentNum * args_xh.sendNum < args_xh.sendNum && notifyMsg.length != 0) {
+            console.log(`正在进行最后一次发送通知，发送数量：${$.cookiesArr.length - $.sentNum * args_xh.sendNum}`);
+            await $.notify.sendNotify(`${$.name}`, `${notifyMsg}`);
+            notifyMsg = "";
+        }
     }
 })()
     .catch((e) => {
@@ -304,7 +304,7 @@ async function try_feedsList(tabId, page) {
     });
 
     let option = await taskurl_xh("newtry", "try_SpecFeedList", body, 61);
-    await $.post(option, (err, resp, data) => {
+    await $.restApi(option, (err, resp, data) => {
         try {
             if (err) {
                 console.log(err);
@@ -320,7 +320,6 @@ async function try_feedsList(tabId, page) {
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 }
             } else {
-                data = JSON.parse(data);
                 let tempKeyword = ``;
                 if (data.data) {
                     $.nowPage === args_xh.totalPages ? ($.nowPage = 1) : $.nowPage++;
@@ -417,17 +416,16 @@ async function try_feedsList(tabId, page) {
 }
 
 async function try_apply(title, activityId) {
-
     console.log(`申请试用商品提交中...`);
     args_xh.printLog ? console.log(`商品：${title}`) : "";
     args_xh.printLog ? console.log(`id为：${activityId}`) : "";
 
     const body = JSON.stringify({
-        activityId: `${activityId * 1}`,
+        activityId: activityId * 1,
     });
 
     let option = await taskurl_xh("newtry", "try_apply", body, 59);
-    await $.post(option, (err, resp, data) => {
+    await $.restApi(option, (err, resp, data) => {
         try {
             if (err) {
                 if (JSON.stringify(err) === `\"Response code 403 (Forbidden)\"`) {
@@ -485,7 +483,7 @@ function try_MyTrials(page, selected) {
         }
         let options = {
             url: URL,
-            body: `appid=newtry&functionId=try_MyTrials&clientVersion=10.3.4&client=wh5&body=%7B%22page%22%3A${page}%2C%22selected%22%3A${selected}%2C%22previewTime%22%3A%22%22%7D`,
+            data: `appid=newtry&functionId=try_MyTrials&clientVersion=10.3.4&client=wh5&body=%7B%22page%22%3A${page}%2C%22selected%22%3A${selected}%2C%22previewTime%22%3A%22%22%7D`,
             headers: {
                 origin: "https://prodev.m.jd.com",
                 "User-Agent": $.userAgent,
@@ -493,7 +491,7 @@ function try_MyTrials(page, selected) {
                 cookie: $.cookie,
             },
         };
-        $.post(options, (err, resp, data) => {
+        $.restApi(options, (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`🚫 ${arguments.callee.name.toString()} API请求失败，请检查网路\n${JSON.stringify(err)}`);
@@ -531,11 +529,12 @@ async function taskurl_xh(appid, functionId, body = JSON.stringify({}), childEle
     var requestBody = {
         functionId: functionId, body: body, appid: appid,
     };
-    let h5ststr = geth5st(requestBody, childElementCount);
+    let h5st = geth5st(requestBody, childElementCount);
     const joylog = CryptoJS.MD5(body, "newtryundefinedundefinedtry_applyundefined").toString().concat("*").concat(undefined); // 一个简易的，不通用的log
 
     return {
-        url: `${URL}?appid=${appid}&functionId=${functionId}&body=${encodeURIComponent(body)}&h5st=${h5ststr}&joylog=${joylog}&area=&uuid=0326636623568363-6366565616634613`,
+        method: 'post',
+        url: `${URL}`,
         headers: {
             Cookie: $.cookie + getBaseCookie($.userAgent, "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html"),
             "User-Agent": $.userAgent,
@@ -550,6 +549,20 @@ async function taskurl_xh(appid, functionId, body = JSON.stringify({}), childEle
             Origin: "https://prodev.m.jd.com",
             Connection: "keep-alive",
         },
+        data: qs.stringify({
+            functionId,
+            body,
+            appid,
+            h5st,
+            joylog,
+            area: '',
+            uuid: '0326636623568363-6366565616634613'
+        }),
+        proxy: {
+            protocol: 'http',
+            host: '192.168.200.253',
+            port: 9000,
+        }
     };
 }
 
@@ -593,14 +606,13 @@ function totalBean() {
                 "User-Agent": $.userAgent,
             }, timeout: 10000,
         };
-        $.post(options, (err, resp, data) => {
+        $.restApi(options, (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`);
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (data) {
-                        data = JSON.parse(data);
                         if (data["retcode"] === 13) {
                             $.isLogin = false; //cookie过期
                             return;
@@ -674,469 +686,216 @@ function Env(name, opts) {
     }
 
     return new (class {
-        constructor(name, opts) {
-            this.name = name;
-            this.http = new Http(this);
-            this.data = null;
-            this.dataFile = "box.dat";
-            this.logs = [];
-            this.isMute = false;
-            this.isNeedRewrite = false;
-            this.logSeparator = "\n";
-            this.startTime = new Date().getTime();
-            Object.assign(this, opts);
-            this.log("", `🔔${this.name}, 开始!`);
-        }
-
-        isNode() {
-            return "undefined" !== typeof module && !!module.exports;
-        }
-
-        isQuanX() {
-            return "undefined" !== typeof $task;
-        }
-
-        isSurge() {
-            return "undefined" !== typeof $httpClient && "undefined" === typeof $loon;
-        }
-
-        isLoon() {
-            return "undefined" !== typeof $loon;
-        }
-
-        toObj(str, defaultValue = null) {
-            try {
-                return JSON.parse(str);
-            } catch {
-                return defaultValue;
+            constructor(name, opts) {
+                this.name = name;
+                this.http = new Http(this);
+                this.data = null;
+                this.dataFile = "box.dat";
+                this.logs = [];
+                this.isMute = false;
+                this.isNeedRewrite = false;
+                this.logSeparator = "\n";
+                this.startTime = new Date().getTime();
+                Object.assign(this, opts);
+                this.log("", `🔔${this.name}, 开始!`);
             }
-        }
 
-        toStr(obj, defaultValue = null) {
-            try {
-                return JSON.stringify(obj);
-            } catch {
-                return defaultValue;
+            isNode() {
+                return "undefined" !== typeof module && !!module.exports;
             }
-        }
 
-        getjson(key, defaultValue) {
-            let json = defaultValue;
-            const val = this.getdata(key);
-            if (val) {
-                try {
-                    json = JSON.parse(this.getdata(key));
-                } catch {
-                }
+            isQuanX() {
+                return "undefined" !== typeof $task;
             }
-            return json;
-        }
 
-        setjson(val, key) {
-            try {
-                return this.setdata(JSON.stringify(val), key);
-            } catch {
-                return false;
+            isSurge() {
+                return "undefined" !== typeof $httpClient && "undefined" === typeof $loon;
             }
-        }
 
-        getScript(url) {
-            return new Promise((resolve) => {
-                this.get({
-                    url,
-                }, (err, resp, body) => resolve(body));
-            });
-        }
-
-        runScript(script, runOpts) {
-            return new Promise((resolve) => {
-                let httpapi = this.getdata("@chavy_boxjs_userCfgs.httpapi");
-                httpapi = httpapi ? httpapi.replace(/\n/g, "").trim() : httpapi;
-                let httpapi_timeout = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
-                httpapi_timeout = httpapi_timeout ? httpapi_timeout * 1 : 20;
-                httpapi_timeout = runOpts && runOpts.timeout ? runOpts.timeout : httpapi_timeout;
-                const [key, addr] = httpapi.split("@");
-                const opts = {
-                    url: `http://${addr}/v1/scripting/evaluate`, body: {
-                        script_text: script, mock_type: "cron", timeout: httpapi_timeout,
-                    }, headers: {
-                        "X-Key": key, Accept: "*/*",
-                    },
-                };
-                this.post(opts, (err, resp, body) => resolve(body));
-            }).catch((e) => this.logErr(e));
-        }
-
-        loaddata() {
-            if (this.isNode()) {
-                this.fs = this.fs ? this.fs : require("fs");
-                this.path = this.path ? this.path : require("path");
-                const curDirDataFilePath = this.path.resolve(this.dataFile);
-                const rootDirDataFilePath = this.path.resolve(process.cwd(), this.dataFile);
-                const isCurDirDataFile = this.fs.existsSync(curDirDataFilePath);
-                const isRootDirDataFile = !isCurDirDataFile && this.fs.existsSync(rootDirDataFilePath);
-                if (isCurDirDataFile || isRootDirDataFile) {
-                    const datPath = isCurDirDataFile ? curDirDataFilePath : rootDirDataFilePath;
-                    try {
-                        return JSON.parse(this.fs.readFileSync(datPath));
-                    } catch (e) {
-                        return {};
-                    }
-                } else return {};
-            } else return {};
-        }
-
-        writedata() {
-            if (this.isNode()) {
-                this.fs = this.fs ? this.fs : require("fs");
-                this.path = this.path ? this.path : require("path");
-                const curDirDataFilePath = this.path.resolve(this.dataFile);
-                const rootDirDataFilePath = this.path.resolve(process.cwd(), this.dataFile);
-                const isCurDirDataFile = this.fs.existsSync(curDirDataFilePath);
-                const isRootDirDataFile = !isCurDirDataFile && this.fs.existsSync(rootDirDataFilePath);
-                const jsondata = JSON.stringify(this.data);
-                if (isCurDirDataFile) {
-                    this.fs.writeFileSync(curDirDataFilePath, jsondata);
-                } else if (isRootDirDataFile) {
-                    this.fs.writeFileSync(rootDirDataFilePath, jsondata);
-                } else {
-                    this.fs.writeFileSync(curDirDataFilePath, jsondata);
-                }
+            isLoon() {
+                return "undefined" !== typeof $loon;
             }
-        }
 
-        lodash_get(source, path, defaultValue = undefined) {
-            const paths = path.replace(/\[(\d+)\]/g, ".$1").split(".");
-            let result = source;
-            for (const p of paths) {
-                result = Object(result)[p];
-                if (result === undefined) {
-                    return defaultValue;
-                }
-            }
-            return result;
-        }
-
-        lodash_set(obj, path, value) {
-            if (Object(obj) !== obj) return obj;
-            if (!Array.isArray(path)) path = path.toString().match(/[^.[\]]+/g) || [];
-            path.slice(0, -1).reduce((a, c, i) => (Object(a[c]) === a[c] ? a[c] : (a[c] = Math.abs(path[i + 1]) >> 0 === +path[i + 1] ? [] : {})), obj)[path[path.length - 1]] = value;
-            return obj;
-        }
-
-        getdata(key) {
-            let val = this.getval(key);
-            // 如果以 @
-            if (/^@/.test(key)) {
-                const [, objkey, paths] = /^@(.*?)\.(.*?)$/.exec(key);
-                const objval = objkey ? this.getval(objkey) : "";
-                if (objval) {
-                    try {
-                        const objedval = JSON.parse(objval);
-                        val = objedval ? this.lodash_get(objedval, paths, "") : val;
-                    } catch (e) {
-                        val = "";
-                    }
-                }
-            }
-            return val;
-        }
-
-        setdata(val, key) {
-            let issuc = false;
-            if (/^@/.test(key)) {
-                const [, objkey, paths] = /^@(.*?)\.(.*?)$/.exec(key);
-                const objdat = this.getval(objkey);
-                const objval = objkey ? (objdat === "null" ? null : objdat || "{}") : "{}";
-                try {
-                    const objedval = JSON.parse(objval);
-                    this.lodash_set(objedval, paths, val);
-                    issuc = this.setval(JSON.stringify(objedval), objkey);
-                } catch (e) {
-                    const objedval = {};
-                    this.lodash_set(objedval, paths, val);
-                    issuc = this.setval(JSON.stringify(objedval), objkey);
-                }
-            } else {
-                issuc = this.setval(val, key);
-            }
-            return issuc;
-        }
-
-        getval(key) {
-            if (this.isSurge() || this.isLoon()) {
-                return $persistentStore.read(key);
-            } else if (this.isQuanX()) {
-                return $prefs.valueForKey(key);
-            } else if (this.isNode()) {
-                this.data = this.loaddata();
-                return this.data[key];
-            } else {
-                return (this.data && this.data[key]) || null;
-            }
-        }
-
-        setval(val, key) {
-            if (this.isSurge() || this.isLoon()) {
-                return $persistentStore.write(val, key);
-            } else if (this.isQuanX()) {
-                return $prefs.setValueForKey(val, key);
-            } else if (this.isNode()) {
-                this.data = this.loaddata();
-                this.data[key] = val;
-                this.writedata();
-                return true;
-            } else {
-                return (this.data && this.data[key]) || null;
-            }
-        }
-
-        initGotEnv(opts) {
-            this.got = this.got ? this.got : require("got");
-            this.cktough = this.cktough ? this.cktough : require("tough-cookie");
-            this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
-            if (opts) {
-                const proxyUrl = 'http://127.0.0.1:3128';
-                opts.agent = {
-                    http: proxyUrl,
-                    https: proxyUrl,
-                }
-                opts.headers = opts.headers ? opts.headers : {};
-                if (undefined === opts.headers.Cookie && undefined === opts.cookieJar) {
-                    opts.cookieJar = this.ckjar;
-                }
-            }
-        }
-
-        get(opts, callback = () => {
-        }) {
-            if (opts.headers) {
-                delete opts.headers["Content-Type"];
-                delete opts.headers["Content-Length"];
-            }
-            if (this.isSurge() || this.isLoon()) {
-                if (this.isSurge() && this.isNeedRewrite) {
-                    opts.headers = opts.headers || {};
-                    Object.assign(opts.headers, {
-                        "X-Surge-Skip-Scripting": false,
-                    });
-                }
-                $httpClient.get(opts, (err, resp, body) => {
-                    if (!err && resp) {
-                        resp.body = body;
-                        resp.statusCode = resp.status;
-                    }
-                    callback(err, resp, body);
-                });
-            } else if (this.isQuanX()) {
-                if (this.isNeedRewrite) {
-                    opts.opts = opts.opts || {};
-                    Object.assign(opts.opts, {
-                        hints: false,
-                    });
-                }
-                $task.fetch(opts).then((resp) => {
-                    const {statusCode: status, statusCode, headers, body} = resp;
-                    callback(null, {
-                        status, statusCode, headers, body,
-                    }, body);
-                }, (err) => callback(err));
-            } else if (this.isNode()) {
-                this.initGotEnv(opts);
-                this.got(opts)
-                    .on("redirect", (resp, nextOpts) => {
+            loaddata() {
+                if (this.isNode()) {
+                    this.fs = this.fs ? this.fs : require("fs");
+                    this.path = this.path ? this.path : require("path");
+                    const curDirDataFilePath = this.path.resolve(this.dataFile);
+                    const rootDirDataFilePath = this.path.resolve(process.cwd(), this.dataFile);
+                    const isCurDirDataFile = this.fs.existsSync(curDirDataFilePath);
+                    const isRootDirDataFile = !isCurDirDataFile && this.fs.existsSync(rootDirDataFilePath);
+                    if (isCurDirDataFile || isRootDirDataFile) {
+                        const datPath = isCurDirDataFile ? curDirDataFilePath : rootDirDataFilePath;
                         try {
-                            if (resp.headers["set-cookie"]) {
-                                const ck = resp.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
-                                if (ck) {
-                                    this.ckjar.setCookieSync(ck, null);
-                                }
-                                nextOpts.cookieJar = this.ckjar;
-                            }
+                            return JSON.parse(this.fs.readFileSync(datPath));
                         } catch (e) {
-                            this.logErr(e);
+                            return {};
                         }
-                        // this.ckjar.setCookieSync(resp.headers['set-cookie'].map(Cookie.parse).toString())
-                    })
-                    .then((resp) => {
-                        const {statusCode: status, statusCode, headers, body} = resp;
+                    } else return {};
+                } else return {};
+            }
+
+            lodash_get(source, path, defaultValue = undefined) {
+                const paths = path.replace(/\[(\d+)\]/g, ".$1").split(".");
+                let result = source;
+                for (const p of paths) {
+                    result = Object(result)[p];
+                    if (result === undefined) {
+                        return defaultValue;
+                    }
+                }
+                return result;
+            }
+
+            getdata(key) {
+                let val = this.getval(key);
+                // 如果以 @
+                if (/^@/.test(key)) {
+                    const [, objkey, paths] = /^@(.*?)\.(.*?)$/.exec(key);
+                    const objval = objkey ? this.getval(objkey) : "";
+                    if (objval) {
+                        try {
+                            const objedval = JSON.parse(objval);
+                            val = objedval ? this.lodash_get(objedval, paths, "") : val;
+                        } catch (e) {
+                            val = "";
+                        }
+                    }
+                }
+                return val;
+            }
+
+            getval(key) {
+                if (this.isSurge() || this.isLoon()) {
+                    return $persistentStore.read(key);
+                } else if (this.isQuanX()) {
+                    return $prefs.valueForKey(key);
+                } else if (this.isNode()) {
+                    this.data = this.loaddata();
+                    return this.data[key];
+                } else {
+                    return (this.data && this.data[key]) || null;
+                }
+            }
+
+            initAxios() {
+                if (!this.axios) {
+                    let jar = new CookieJar();
+                    this.axios = wrapper(axios.create({jar}));
+                }
+            }
+
+            restApi(opts, callback = () => {
+            }) {
+                this.initAxios();
+                this.axios(opts)
+                    .then(resp => {
+                        const {status, headers, data} = resp;
                         callback(null, {
-                            status, statusCode, headers, body,
-                        }, body);
+                            status, headers, data,
+                        }, data);
                     }, (err) => {
                         const {message: error, response: resp} = err;
-                        callback(error, resp, resp && resp.body);
+                        callback(error, resp, resp && resp.data);
                     });
             }
-        }
 
-        post(opts, callback = () => {
-        }) {
-            // 如果指定了请求体, 但没指定`Content-Type`, 则自动生成
-            if (opts.body && opts.headers && !opts.headers["Content-Type"]) {
-                opts.headers["Content-Type"] = "application/x-www-form-urlencoded";
-            }
-            if (opts.headers) delete opts.headers["Content-Length"];
-            if (this.isSurge() || this.isLoon()) {
-                if (this.isSurge() && this.isNeedRewrite) {
-                    opts.headers = opts.headers || {};
-                    Object.assign(opts.headers, {
-                        "X-Surge-Skip-Scripting": false,
-                    });
-                }
-                $httpClient.post(opts, (err, resp, body) => {
-                    if (!err && resp) {
-                        resp.body = body;
-                        resp.statusCode = resp.status;
+            /**
+             * 系统通知
+             *
+             * > 通知参数: 同时支持 QuanX 和 Loon 两种格式, EnvJs根据运行环境自动转换, Surge 环境不支持多媒体通知
+             *
+             * 示例:
+             * $.msg(title, subt, desc, 'twitter://')
+             * $.msg(title, subt, desc, { 'open-url': 'twitter://', 'media-url': 'https://github.githubassets.com/images/modules/open_graph/github-mark.png' })
+             * $.msg(title, subt, desc, { 'open-url': 'https://bing.com', 'media-url': 'https://github.githubassets.com/images/modules/open_graph/github-mark.png' })
+             *
+             * @param {*} title 标题
+             * @param {*} subt 副标题
+             * @param {*} desc 通知详情
+             * @param {*} opts 通知参数
+             *
+             */
+            msg(title = name, subt = "", desc = "", opts) {
+                const toEnvOpts = (rawopts) => {
+                    if (!rawopts) return rawopts;
+                    if (typeof rawopts === "string") {
+                        if (this.isLoon()) return rawopts; else if (this.isQuanX()) return {
+                            "open-url": rawopts,
+                        }; else if (this.isSurge()) return {
+                            url: rawopts,
+                        }; else return undefined;
+                    } else if (typeof rawopts === "object") {
+                        if (this.isLoon()) {
+                            let openUrl = rawopts.openUrl || rawopts.url || rawopts["open-url"];
+                            let mediaUrl = rawopts.mediaUrl || rawopts["media-url"];
+                            return {
+                                openUrl, mediaUrl,
+                            };
+                        } else if (this.isQuanX()) {
+                            let openUrl = rawopts["open-url"] || rawopts.url || rawopts.openUrl;
+                            let mediaUrl = rawopts["media-url"] || rawopts.mediaUrl;
+                            return {
+                                "open-url": openUrl, "media-url": mediaUrl,
+                            };
+                        } else if (this.isSurge()) {
+                            let openUrl = rawopts.url || rawopts.openUrl || rawopts["open-url"];
+                            return {
+                                url: openUrl,
+                            };
+                        }
+                    } else {
+                        return undefined;
                     }
-                    callback(err, resp, body);
-                });
-            } else if (this.isQuanX()) {
-                opts.method = "POST";
-                if (this.isNeedRewrite) {
-                    opts.opts = opts.opts || {};
-                    Object.assign(opts.opts, {
-                        hints: false,
-                    });
-                }
-                $task.fetch(opts).then((resp) => {
-                    const {statusCode: status, statusCode, headers, body} = resp;
-                    callback(null, {
-                        status, statusCode, headers, body,
-                    }, body);
-                }, (err) => callback(err));
-            } else if (this.isNode()) {
-                this.initGotEnv(opts);
-                const {url, ..._opts} = opts;
-                this.got.post(url, _opts).then((resp) => {
-                    const {statusCode: status, statusCode, headers, body} = resp;
-                    callback(null, {
-                        status, statusCode, headers, body,
-                    }, body);
-                }, (err) => {
-                    const {message: error, response: resp} = err;
-                    callback(error, resp, resp && resp.body);
-                });
-            }
-        }
-
-        /**
-         *
-         * 示例:$.time('yyyy-MM-dd qq HH:mm:ss.S')
-         *    :$.time('yyyyMMddHHmmssS')
-         *    y:年 M:月 d:日 q:季 H:时 m:分 s:秒 S:毫秒
-         *    其中y可选0-4位占位符、S可选0-1位占位符，其余可选0-2位占位符
-         * @param {*} fmt 格式化参数
-         *
-         */
-        time(fmt) {
-            let o = {
-                "M+": new Date().getMonth() + 1,
-                "d+": new Date().getDate(),
-                "H+": new Date().getHours(),
-                "m+": new Date().getMinutes(),
-                "s+": new Date().getSeconds(),
-                "q+": Math.floor((new Date().getMonth() + 3) / 3),
-                S: new Date().getMilliseconds(),
-            };
-            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (new Date().getFullYear() + "").substr(4 - RegExp.$1.length));
-            for (let k in o) if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
-            return fmt;
-        }
-
-        /**
-         * 系统通知
-         *
-         * > 通知参数: 同时支持 QuanX 和 Loon 两种格式, EnvJs根据运行环境自动转换, Surge 环境不支持多媒体通知
-         *
-         * 示例:
-         * $.msg(title, subt, desc, 'twitter://')
-         * $.msg(title, subt, desc, { 'open-url': 'twitter://', 'media-url': 'https://github.githubassets.com/images/modules/open_graph/github-mark.png' })
-         * $.msg(title, subt, desc, { 'open-url': 'https://bing.com', 'media-url': 'https://github.githubassets.com/images/modules/open_graph/github-mark.png' })
-         *
-         * @param {*} title 标题
-         * @param {*} subt 副标题
-         * @param {*} desc 通知详情
-         * @param {*} opts 通知参数
-         *
-         */
-        msg(title = name, subt = "", desc = "", opts) {
-            const toEnvOpts = (rawopts) => {
-                if (!rawopts) return rawopts;
-                if (typeof rawopts === "string") {
-                    if (this.isLoon()) return rawopts; else if (this.isQuanX()) return {
-                        "open-url": rawopts,
-                    }; else if (this.isSurge()) return {
-                        url: rawopts,
-                    }; else return undefined;
-                } else if (typeof rawopts === "object") {
-                    if (this.isLoon()) {
-                        let openUrl = rawopts.openUrl || rawopts.url || rawopts["open-url"];
-                        let mediaUrl = rawopts.mediaUrl || rawopts["media-url"];
-                        return {
-                            openUrl, mediaUrl,
-                        };
+                };
+                if (!this.isMute) {
+                    if (this.isSurge() || this.isLoon()) {
+                        $notification.post(title, subt, desc, toEnvOpts(opts));
                     } else if (this.isQuanX()) {
-                        let openUrl = rawopts["open-url"] || rawopts.url || rawopts.openUrl;
-                        let mediaUrl = rawopts["media-url"] || rawopts.mediaUrl;
-                        return {
-                            "open-url": openUrl, "media-url": mediaUrl,
-                        };
-                    } else if (this.isSurge()) {
-                        let openUrl = rawopts.url || rawopts.openUrl || rawopts["open-url"];
-                        return {
-                            url: openUrl,
-                        };
+                        $notify(title, subt, desc, toEnvOpts(opts));
                     }
+                }
+                if (!this.isMuteLog) {
+                    let logs = ["", "==============📣系统通知📣=============="];
+                    logs.push(title);
+                    subt ? logs.push(subt) : "";
+                    desc ? logs.push(desc) : "";
+                    console.log(logs.join("\n"));
+                    this.logs = this.logs.concat(logs);
+                }
+            }
+
+            log(...logs) {
+                if (logs.length > 0) {
+                    this.logs = [...this.logs, ...logs];
+                }
+                console.log(logs.join(this.logSeparator));
+            }
+
+            logErr(err, msg) {
+                const isPrintSack = !this.isSurge() && !this.isQuanX() && !this.isLoon();
+                if (!isPrintSack) {
+                    this.log("", `❗️${this.name}, 错误!`, err);
                 } else {
-                    return undefined;
-                }
-            };
-            if (!this.isMute) {
-                if (this.isSurge() || this.isLoon()) {
-                    $notification.post(title, subt, desc, toEnvOpts(opts));
-                } else if (this.isQuanX()) {
-                    $notify(title, subt, desc, toEnvOpts(opts));
+                    this.log("", `❗️${this.name}, 错误!`, err.stack);
                 }
             }
-            if (!this.isMuteLog) {
-                let logs = ["", "==============📣系统通知📣=============="];
-                logs.push(title);
-                subt ? logs.push(subt) : "";
-                desc ? logs.push(desc) : "";
-                console.log(logs.join("\n"));
-                this.logs = this.logs.concat(logs);
+
+            wait(time) {
+                return new Promise((resolve) => setTimeout(resolve, time));
+            }
+
+            done(val = {}) {
+                const endTime = new Date().getTime();
+                const costTime = (endTime - this.startTime) / 1000;
+                this.log("", `🔔${this.name}, 结束! 🕛 ${costTime} 秒`);
+                this.log();
+                if (this.isSurge() || this.isQuanX() || this.isLoon()) {
+                    $done(val);
+                }
             }
         }
 
-        log(...logs) {
-            if (logs.length > 0) {
-                this.logs = [...this.logs, ...logs];
-            }
-            console.log(logs.join(this.logSeparator));
-        }
-
-        logErr(err, msg) {
-            const isPrintSack = !this.isSurge() && !this.isQuanX() && !this.isLoon();
-            if (!isPrintSack) {
-                this.log("", `❗️${this.name}, 错误!`, err);
-            } else {
-                this.log("", `❗️${this.name}, 错误!`, err.stack);
-            }
-        }
-
-        wait(time) {
-            return new Promise((resolve) => setTimeout(resolve, time));
-        }
-
-        done(val = {}) {
-            const endTime = new Date().getTime();
-            const costTime = (endTime - this.startTime) / 1000;
-            this.log("", `🔔${this.name}, 结束! 🕛 ${costTime} 秒`);
-            this.log();
-            if (this.isSurge() || this.isQuanX() || this.isLoon()) {
-                $done(val);
-            }
-        }
-    })(name, opts);
+    )
+    (name, opts);
 }
