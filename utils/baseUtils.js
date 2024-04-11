@@ -1,15 +1,13 @@
 const CryptoJS = require("crypto-js");
+const ADLER32 = require("adler-32");
 const crc32 = require('crc').crc32;
 
 
 class BaseUtils {
-    constructor(window, document, navigator, localStorage, history, api) {
-        this.window = window
-        this.document = document
-        this.navigator = navigator
-        this.localStorage = localStorage
-        this.history = history
-        this.api = api
+    constructor() {
+
+
+        global.baseUtils = this
     }
 
     // window = {
@@ -1361,6 +1359,116 @@ class BaseUtils {
                 return that.encryptD(t, n);
             }
         }[e]();
+    }
+
+    isFunction(t) {
+        return "function" == typeof t;
+    }
+
+    emptyFunction() {
+    }
+
+    decodeBase64URL(encodedString) {
+        return (encodedString + '===').slice(0, encodedString.length + 3 - (encodedString.length + 3) % 4)
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
+    }
+
+    getDefaultMethod(obj, methodName) {
+        const e = obj[methodName];
+        return obj === Array.prototype || Array.prototype.isPrototypeOf(obj) && e === Array.prototype[methodName] ? Array.prototype[methodName] : e
+    }
+
+    getRandomIDPro() {
+        var t, e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}, r = e.size,
+            n = void 0 === r ? 10 : r, o = e.dictType, i = void 0 === o ? "number" : o, a = e.customDict, u = "";
+        if (a && "string" == typeof a) t = a; else switch (i) {
+            case"alphabet":
+                t = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                break;
+            case"max":
+                t = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
+                break;
+            default:
+                t = "0123456789"
+        }
+        for (; n--;) u += t[Math.random() * t.length | 0];
+        return u
+    }
+
+    fromBase64(t) {
+        return t.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
+    }
+
+    toBase64(t) {
+        return (t + this.getDefaultMethod("===", 'slice').call("===", (t.length + 3) % 4)).replace(/-/g, "+").replace(/_/g, "/")
+    }
+
+    isPlainObject(t) {
+        return "[object Object]" === Object.prototype.toString.call(t)
+    }
+
+    isEmpty(t) {
+        return !!this.isPlainObject(t) && !Object.keys(t).length
+    }
+
+    containsReservedParamName(t) {
+        const PS = ["h5st", "_stk", "_ste"];
+        for (var e = Object.keys(t), r = 0; r < e.length; r++) {
+            var n = e[r];
+            if (this.getDefaultMethod(PS, 'indexOf').call(PS, n) >= 0) return !0
+        }
+        return !1
+    }
+
+    isSafeParamValue(t) {
+        let Bp = "function" == typeof Object.Symbol && "symbol" == typeof Object.f("iterator") ? function (t) {
+            return typeof t
+        } : function (t) {
+            return t && "function" == typeof Object.Symbol && t.constructor === Object.Symbol && t !== Object.Symbol.prototype ? "symbol" : typeof t
+        }
+        let e = Bp(t);
+        return "number" === e && !isNaN(t) || "string" === e || "boolean" === e
+    }
+
+    formatDate() {
+        let t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : Date.now(),
+            e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "yyyy-MM-dd", n = new Date(t),
+            r = e, o = {
+                "M+": n.getMonth() + 1,
+                "d+": n.getDate(),
+                "D+": n.getDate(),
+                "h+": n.getHours(),
+                "H+": n.getHours(),
+                "m+": n.getMinutes(),
+                "s+": n.getSeconds(),
+                "w+": n.getDay(),
+                "q+": Math.floor((n.getMonth() + 3) / 3),
+                "S+": n.getMilliseconds(),
+            };
+        return (/(y+)/i.test(r) && (r = r.replace(RegExp.$1, "".concat(n.getFullYear()).substr(4 - RegExp.$1.length))), Object.keys(o).forEach(function (t) {
+            if (new RegExp("(".concat(t, ")")).test(r)) {
+                var e = "S+" === t ? "000" : "00";
+                r = r.replace(RegExp.$1, 1 == RegExp.$1.length ? o[t] : "".concat(e).concat(o[t]).substr("".concat(o[t]).length));
+            }
+        }), r);
+    }
+
+    getRandomIDPro(e = {}) {
+        var t, r = e.size,
+            n = void 0 === r ? 10 : r, o = e.dictType, i = void 0 === o ? "number" : o, a = e.customDict, u = "";
+        if (a && "string" == typeof a) t = a; else switch (i) {
+            case"alphabet":
+                t = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                break;
+            case"max":
+                t = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
+                break;
+            default:
+                t = "0123456789"
+        }
+        for (; n--;) u += t[Math.random() * t.length | 0];
+        return u
     }
 }
 
