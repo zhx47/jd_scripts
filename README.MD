@@ -1,5 +1,7 @@
 **试用暂时不能用，这两天修复掉**
 
+https://t.me/zhouya47
+
 ```
 ql repo https://github.com/zhx47/jd_scripts.git "jd_" "" "baseCookie|h5st3.1_lite|jdCookie|sendNotify|USER_AGENTS"
 ```
