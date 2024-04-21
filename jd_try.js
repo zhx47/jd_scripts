@@ -94,7 +94,7 @@ let args_xh = {
      * 例如是18件，将会进行第三次获取，直到过滤完毕后为20件才会停止，不建议设置太大
      * 可设置环境变量：JD_TRY_MAXLENGTH
      * */
-    maxLength: process.env.JD_TRY_MAXLENGTH * 1 || 20, /*
+    maxLength: process.env.JD_TRY_MAXLENGTH * 1 || 200, /*
      * 过滤种草官类试用，某些试用商品是专属官专属，考虑到部分账号不是种草官账号
      * 例如A商品是种草官专属试用商品，下面设置为true，而你又不是种草官账号，那A商品将不会被添加到待提交试用组
      * 例如B商品是种草官专属试用商品，下面设置为false，而你是种草官账号，那A商品将会被添加到待提交试用组
@@ -439,7 +439,7 @@ async function try_feedsList(tabId, page) {
             console.log(`💩 获得试用列表失败: ${data.message}`);
         }
     } catch (e) {
-        if (JSON.stringify(e.message) === `\"Response code 403 (Forbidden)\"`) {
+        if (e.message === `Request failed with status code 403`) {
             $.retrynum++;
             if ($.retrynum === 4) {
                 $.isForbidden = true;
@@ -509,7 +509,7 @@ async function try_apply(title, activityId) {
             console.log("申请失败", data);
         }
     } catch (e) {
-        if (JSON.stringify(e.message) === `\"Response code 403 (Forbidden)\"`) {
+        if (e.message === `Request failed with status code 403`) {
             $.isForbidden = true;
             console.log("账号被京东服务器风控，不再请求该帐号");
         } else {
