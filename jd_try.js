@@ -426,7 +426,7 @@ async function try_feedsList(tabId, page) {
             }
             console.log(`当前试用组长度为：${trialActivityIdList.length}`);
             console.log(`下一页状态:${data.data.hasNext}`);
-            if (data.data.hasNext != true || $.nowTabIdIndex < args_xh.tabId.length) {
+            if (data.data.hasNext === false) {
                 //这个是因为每一个tab都会有对应的页数，获取完如果还不够的话，就获取下一个tab
                 $.nowTabIdIndex++;
                 $.nowPage = 1;
