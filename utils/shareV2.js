@@ -48,9 +48,16 @@ async function parse(urlString) {
     return Object.assign(result, {plainUrl: plaintext})
 }
 
-module.exports.shareParseV2 = parse
+function test() {
+    parse('https://lzkj-isv.isvjcloud.com/prod/cc/interaction/v2/landing/share/?shareId=1776206595853877249')
+        .then((res) => {
+            console.log(res)
+        })
+}
 
-parse('https://lzkj-isv.isvjcloud.com/prod/cc/interaction/v2/landing/share/?shareId=1776206595853877249')
-    .then((res) => {
-        console.log(res)
-    })
+module.exports = {
+    shareParseV2: parse,
+    test
+}
+
+

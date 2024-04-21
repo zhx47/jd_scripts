@@ -1,40 +1,11 @@
-const jsdom = require("jsdom");
-const {BaseUtils} = require('./baseUtils');
 const CryptoJS = require("crypto-js");
+const {BaseUtils} = require("./baseUtils");
 
 class SmashUtils {
 
-    constructor(url, userAgent, api) {
-        const {JSDOM} = jsdom;
-        let dom = new JSDOM(``, {
-            url: url,
-            userAgent,
-            cookieJar: api.cookieJar
-        });
-
-        this.window = dom.window
-        this.window.screen = {
-            availHeight: 1032,
-            availLeft: 0,
-            availTop: 0,
-            availWidth: 1920,
-            colorDepth: 24,
-            height: 1080,
-            isExtended: false,
-            onchange: null,
-            orientation: {
-                ScreenOrientation: { angle: 0, type: 'landscape-primary', onchange: null }
-            },
-            pixelDepth: 24,
-            width: 1920
-        }
-        this.document = dom.window.document
-        this.navigator = dom.window.navigator
-        this.localStorage = this.window.localStorage
-        this.history = this.window.history
-        this.location = this.window.location
-
-        this.baseUtils = new BaseUtils(this.window, this.document, this.navigator, this.localStorage, this.history, api);
+    constructor(url, cookieStr, userAgent) {
+        global.baseUtils || new BaseUtils();
+        baseUtils.changeEnv(url, cookieStr, userAgent);
 
         this.P = {};
 
@@ -72,18 +43,18 @@ class SmashUtils {
         this.Y = 0;
         this.Z = !1;
         this.Q = 0;
-        this.$ = this.baseUtils.getTouchSession();
+        this.$ = baseUtils.getTouchSession();
         this.ee = "w4.0.7";
-        this.te = this.baseUtils["isMobile"]();
+        this.te = baseUtils["isMobile"]();
         this.ne = this.te ? "touchstart" : "mousedown";
         this.re = this.te ? "touchend" : "mouseup";
         this.oe = this.te ? "touchmove" : "mousemove";
-        this.ie = this.baseUtils["getCookieJdu"]();
+        this.ie = baseUtils["getCookieJdu"]();
         this.ae = ["click", "mousedown", "mousemove", "mouseup", "touchstart", "touchmove", "touchend"];
         this.ue = [];
         this.ce = [];
         this.se = [0, 0, 0];
-        this.fe = this.baseUtils.getCurrentTime();
+        this.fe = baseUtils.getCurrentTime();
         this.le = !1;
         this.pe = "a";
         this.de = "a";
@@ -97,8 +68,8 @@ class SmashUtils {
         this.xe = "a";
         this._e = "a";
         this.Se = "a";
-        this.Ae = this.baseUtils["getDefaultArr"](7);
-        this.Ne = this.baseUtils["getDefaultArr"](4);
+        this.Ae = baseUtils["getDefaultArr"](7);
+        this.Ne = baseUtils["getDefaultArr"](4);
         this.Ce = "a";
         this.Ee = "a";
         this.Oe = "a";
@@ -114,7 +85,7 @@ class SmashUtils {
         this.ze = 0;
         this.Re = "";
         this.Ue = "a";
-        this.qe = this.baseUtils["getDefaultArr"](7);
+        this.qe = baseUtils["getDefaultArr"](7);
         this.He = new Array(7).fill("a");
         this.We = new Array(7).fill("f");
         this.Ke = 864e9;
@@ -126,7 +97,7 @@ class SmashUtils {
         this.Ye = {};
 
 
-        this.baseUtils.rewriteToString(this);
+        baseUtils.rewriteToString(this);
     }
 
     // window = {
@@ -134,7 +105,7 @@ class SmashUtils {
     //         try {
     //             e = JSON.parse(e);
     //             if (e.status === 0) {
-    //                 this.baseUtils.webview.setStorage("unionwsws", e.data);
+    //                 baseUtils.webview.setStorage("unionwsws", e.data);
     //             }
     //         } catch (e) {
     //         }
@@ -147,10 +118,10 @@ class SmashUtils {
 
     clearjoyytoken(e, t) {
         try {
-            var u = this.baseUtils.getTokem("joyytokem", e).joyytokenVal;
+            var u = baseUtils.getTokem("joyytokem", e).joyytokenVal;
             if (!u || u.indexOf(e) !== 0 || t && 1 === this.Q || /^undefined/.test(u)) {
-                this.document.cookie = "joyytokem=;domain=.jd.com;path=/;expires=" + new Date(new Date().getTime() + 864e9).toGMTString();
-                this.baseUtils.clearTokem("joyytokem", e);
+                document.cookie = "joyytokem=;domain=.jd.com;path=/;expires=" + new Date(new Date().getTime() + 864e9).toGMTString();
+                baseUtils.clearTokem("joyytokem", e);
                 this.B.encrypt_id = this.B.default_encrypt_id;
                 this.B.cf_v = this.B.default_cf_v
             }
@@ -165,7 +136,7 @@ class SmashUtils {
 
     async getjoyytoken(e, t) {
         try {
-            var u = this.baseUtils.getTokem("joyytokem", e).joyytokenVal;
+            var u = baseUtils.getTokem("joyytokem", e).joyytokenVal;
             if (!u || (u.indexOf(e) !== 0) || t && (this.Q === 1) || /^undefined/.test(u)) {
                 await this.getSwitch(e);
             }
@@ -204,7 +175,7 @@ class SmashUtils {
     decipherJoyToken(e, t) {
         var u = {
             jjt: "a",
-            expire: this.baseUtils.getCurrentTime(),
+            expire: baseUtils.getCurrentTime(),
             outtime: 3,
             time_correction: !1
         };
@@ -212,18 +183,18 @@ class SmashUtils {
         try {
             var s = e.indexOf(t) + t.length, f = e.length;
             let c = e.slice(s, f).split(".").map(function (e) {
-                return that.baseUtils.atobFunc(e);
+                return baseUtils.atobFunc(e);
             });
             if (c[1] && c[0] && c[2]) {
                 var l = c[0].slice(2, 7), p = c[0].slice(7, 9),
-                    d = this.baseUtils.xorEncrypt(c[1] || "", l).xorEncrypted.split("~");
+                    d = baseUtils.xorEncrypt(c[1] || "", l).xorEncrypted.split("~");
                 u.outtime = d[3] - 0, u.encrypt_id = d[2], u.jjt = "t";
                 var h = (d[0] - 0) || 0;
                 if (h && typeof h === "number") {
                     u.time_correction = !0;
                     u.expire = h;
                 }
-                var m = (h - this.baseUtils.getCurrentTime()) || 0;
+                var m = (h - baseUtils.getCurrentTime()) || 0;
                 u.q = m;
                 u.cf_v = p;
                 return u;
@@ -266,19 +237,19 @@ class SmashUtils {
     }
 
     async getSwitch(e) {
-        if (!this.baseUtils.isDuringDate(this.Je, this.Fe)) {
+        if (!baseUtils.isDuringDate(this.Je, this.Fe)) {
             var a = encodeURIComponent(e),
-                u = this.baseUtils.getJdKey(),
-                c = this.baseUtils.getCookie("pwdt_id") || this.baseUtils.getCookie("pin") || "",
-                s = this.baseUtils.BKDRHash(c) || "";
+                u = baseUtils.getJdKey(),
+                c = baseUtils.getCookie("pwdt_id") || baseUtils.getCookie("pin") || "",
+                s = baseUtils.BKDRHash(c) || "";
 
             try {
-                let {data: t} = await this.baseUtils.ajax({
+                let {data: t} = await baseUtils.ajax({
                     type: "POST",
-                    url: this.baseUtils.requestUrl.gettoken,
+                    url: baseUtils.requestUrl.gettoken,
                     credential: !0,
                     data: "content=".concat(JSON.stringify({
-                        appname: a, whwswswws: this.baseUtils.getCookie("shshshfpb"), jdkey: u, body: {
+                        appname: a, whwswswws: baseUtils.getCookie("shshshfpb"), jdkey: u, body: {
                             platform: "1",
                             sceneid: this.P.sceneid || "",
                             hs: s,
@@ -306,8 +277,8 @@ class SmashUtils {
                         });
 
                         try {
-                            this.document.cookie = "joyytokem=" + this.P.appid + t.joyytoken + ";domain=.jd.com;path=/;expires=" + new Date(p + v * 60 * 60 * 1e3).toGMTString();
-                            var y = this.window.localStorage.getItem("joyytokem"),
+                            document.cookie = "joyytokem=" + this.P.appid + t.joyytoken + ";domain=.jd.com;path=/;expires=" + new Date(p + v * 60 * 60 * 1e3).toGMTString();
+                            var y = window.localStorage.getItem("joyytokem"),
                                 w = {};
                             if (y) {
                                 var b = JSON.parse(y),
@@ -328,7 +299,7 @@ class SmashUtils {
                                 xcd: t.xcd || "",
                                 expires: new Date(p + 60 * v * 60 * 1e3).toGMTString()
                             };
-                            this.window.localStorage.setItem("joyytokem", JSON.stringify(w));
+                            window.localStorage.setItem("joyytokem", JSON.stringify(w));
                         } catch (e) {
                             this.getInterfaceData({
                                 funcName: "cookie",
@@ -365,14 +336,14 @@ class SmashUtils {
     async reportInterfaceData() {
         try {
             this.setjoyyaCookie()
-            if (this.baseUtils.isDuringDate(this.Je, this.Fe)) return;
+            if (baseUtils.isDuringDate(this.Je, this.Fe)) return;
             var a = this.B.openMonitor,
                 u = this.B.collectStatus,
                 c = this.B.collect_vote;
             if (a === "0") return;
-            var s = this.baseUtils.collectVoteFilter(u, c, this.M, "session_c");
+            var s = baseUtils.collectVoteFilter(u, c, this.M, "session_c");
             if (!s || s.length === 0) return;
-            var f = this.baseUtils.getCurrentTime();
+            var f = baseUtils.getCurrentTime();
             s.forEach(function (t) {
                 t.createdate = "".concat(f);
             })
@@ -381,12 +352,12 @@ class SmashUtils {
                 await this.getjoyytoken(this.P.appid)
             }
             try {
-                await this.baseUtils.ajax({
+                await baseUtils.ajax({
                     type: "POST",
-                    url: this.baseUtils.requestUrl.bypass,
+                    url: baseUtils.requestUrl.bypass,
                     data: "content=".concat(JSON.stringify({
                         appname: "interfaceInvoke",
-                        whwswswws: this.baseUtils.getCookie("shshshfpb"),
+                        whwswswws: baseUtils.getCookie("shshshfpb"),
                         jdkey: "",
                         body: s
                     }))
@@ -402,27 +373,27 @@ class SmashUtils {
         var i = arguments.length > 0 && void 0 !== arguments[0] && arguments[0];
         try {
             this.setjoyyaCookie();
-            var h = this.baseUtils.isDuringDate(this.Je, this.Fe);
+            var h = baseUtils.isDuringDate(this.Je, this.Fe);
             if (h) return;
             var s = this.B.openMonitor,
                 f = this.B.collectStatus,
                 l = this.B.collect_vote;
             if ("0" === s) return;
             var v;
-            v = i ? this.I : this.baseUtils.collectVoteFilter(f, l, this.I, "session");
+            v = i ? this.I : baseUtils.collectVoteFilter(f, l, this.I, "session");
             if (!v || v.length === 0) return;
-            var p = this.baseUtils.getCurrentTime();
+            var p = baseUtils.getCurrentTime();
             v.forEach(function (e) {
                 e.createdate = "".concat(p);
             });
 
             try {
-                await this.baseUtils.ajax({
+                await baseUtils.ajax({
                     type: "POST",
-                    url: this.baseUtils.requestUrl.bypass,
+                    url: baseUtils.requestUrl.bypass,
                     data: "content=".concat(JSON.stringify({
                         appname: "stouchmodeH5",
-                        whwswswws: this.baseUtils.getCookie("shshshfpb"),
+                        whwswswws: baseUtils.getCookie("shshshfpb"),
                         jdkey: "",
                         body: v
                     }))
@@ -443,7 +414,7 @@ class SmashUtils {
             this.Be = "t";
             if (!this.Z) return;
             var u = this.getid(e);
-            var p = this.baseUtils.webview.getStorage("unionwsws") || {
+            var p = baseUtils.webview.getStorage("unionwsws") || {
                 jmafinger: ""
             };
 
@@ -451,12 +422,12 @@ class SmashUtils {
                 appid: this.P.appid || "",
                 sceneid: this.P.sceneid || "",
                 uid: this.P.uid || "",
-                url: encodeURIComponent(this.location.href),
-                ua: encodeURIComponent(this.baseUtils.getUa()),
+                url: encodeURIComponent(location.href),
+                ua: encodeURIComponent(baseUtils.getUa()),
                 type_d: this.je,
-                shshshfpa: this.baseUtils.getCookie("shshshfpa"),
-                shshshfpb: this.baseUtils.getCookie("shshshfpb"),
-                cookie_pin: this.baseUtils.getCookiePin(),
+                shshshfpa: baseUtils.getCookie("shshshfpa"),
+                shshshfpb: baseUtils.getCookie("shshshfpb"),
+                cookie_pin: baseUtils.getCookiePin(),
                 client_version: this.ee,
                 npt: this.ge,
                 nps: this.ye,
@@ -465,17 +436,17 @@ class SmashUtils {
             };
 
             var K = this.z[u] || {};
-            var q = this.baseUtils.getCurrentTime();
+            var q = baseUtils.getCurrentTime();
             var v = K.start_time || "",
                 g = K.end_time || "",
                 b = K.click_time || "";
             this.le = e.isTrusted;
-            var a = this.baseUtils.getGPUMes();
+            var a = baseUtils.getGPUMes();
 
             var oe = {
                 buttonid: u,
                 client_time: q,
-                devtools_open: this.baseUtils.isDevtoolOpen(),
+                devtools_open: baseUtils.isDevtoolOpen(),
                 touchtime: g - v,
                 touch_is_trust: e.isTrusted,
                 screenx: e.screenX,
@@ -484,30 +455,30 @@ class SmashUtils {
                 clienty: e.clientY,
                 radiusx: K.radiusX,
                 radiusy: K.radiusY,
-                force: this.baseUtils.getDefaultVal(K.force),
+                force: baseUtils.getDefaultVal(K.force),
                 click_id: e.target.id || "",
                 pagex: e.pageX,
                 last_page_down_time: q - this.R,
                 last_click_time: q - b,
                 pagey: e.pageY,
-                call_stack: this.baseUtils.getCallStack(),
-                call_stack_source: this.baseUtils.getCallStackUnencrypted(),
+                call_stack: baseUtils.getCallStack(),
+                call_stack_source: baseUtils.getCallStackUnencrypted(),
                 data: K.data || "",
                 jdu: this.ie,
                 session: this.$,
                 time_correction: this.L,
-                jdkey: this.baseUtils.getJdKey(),
+                jdkey: baseUtils.getJdKey(),
                 jmafinger: p.jmafinger,
-                numOfNavigatorPlugins: this.baseUtils.getPluginsNum(),
+                numOfNavigatorPlugins: baseUtils.getPluginsNum(),
                 gpuServiceProvider: a[0],
                 gpuBrand: a[1],
-                numOfNavigatorLanguages: this.baseUtils.getLangNum() || "",
-                numOfChromeAttribute: this.baseUtils.getChromeAttribute() || "",
-                configurableEnumerable: this.baseUtils.getConfigurable_Enumerable(),
+                numOfNavigatorLanguages: baseUtils.getLangNum() || "",
+                numOfChromeAttribute: baseUtils.getChromeAttribute() || "",
+                configurableEnumerable: baseUtils.getConfigurable_Enumerable(),
                 azimuth: "",
                 accelerometer: "",
-                ncn: this.baseUtils.getNaviConnection(),
-                bty: this.baseUtils.getBatteryStatus()
+                ncn: baseUtils.getNaviConnection(),
+                bty: baseUtils.getBatteryStatus()
             };
 
             this.setIdData(u, "click_time", q);
@@ -517,7 +488,7 @@ class SmashUtils {
                 W[M] = String(U);
             }
             this.I.push(W);
-            this.baseUtils.arrayLength(3, this.ce, this.getCurrnetData(e));
+            baseUtils.arrayLength(3, this.ce, this.getCurrnetData(e));
         } catch (e) {
         }
     };
@@ -525,8 +496,8 @@ class SmashUtils {
     getCurrnetData(e, t) {
         try {
             var u = (this.z[t] || {}).force,
-                c = typeof this.baseUtils.getDefaultVal(u) == "number" ? u.toFixed(3) : this.baseUtils.getDefaultVal(u),
-                s = this.baseUtils.getCurrentTime() - this.fe,
+                c = typeof baseUtils.getDefaultVal(u) == "number" ? u.toFixed(3) : baseUtils.getDefaultVal(u),
+                s = baseUtils.getCurrentTime() - this.fe,
                 f = e.clientX,
                 l = e.clientY;
 
@@ -538,7 +509,7 @@ class SmashUtils {
                 l = e.changedTouches[0].clientY
             }
 
-            return "d" + (this.ae.indexOf(e.type) + 1) + "-" + this.baseUtils.baseConverter(f, 36) + "," + this.baseUtils.baseConverter(l, 36) + "," + this.baseUtils.baseConverter(s, 36) + "," + c + "," + this.baseUtils.getDefaultVal(e.isTrusted);
+            return "d" + (this.ae.indexOf(e.type) + 1) + "-" + baseUtils.baseConverter(f, 36) + "," + baseUtils.baseConverter(l, 36) + "," + baseUtils.baseConverter(s, 36) + "," + c + "," + baseUtils.getDefaultVal(e.isTrusted);
         } catch (e) {
             return "";
         }
@@ -553,7 +524,7 @@ class SmashUtils {
             this.ke = 0
         }
         var c = this.getid(e);
-        this.baseUtils.arrayLength(5, this.ue, this.getCurrnetData(e, c));
+        baseUtils.arrayLength(5, this.ue, this.getCurrnetData(e, c));
         this.se[2] = this.se[2] + 1;
         this.se[1] = this.se[1] > this.se[2] ? this.se[1] : this.se[2];
     };
@@ -562,9 +533,9 @@ class SmashUtils {
         this.Be = "t";
         if (!this.Z) return;
         var c = this.getid(e);
-        this.setIdData(c, "end_time", this.baseUtils.getCurrentTime());
+        this.setIdData(c, "end_time", baseUtils.getCurrentTime());
         this.setIdData(c, "is_trust", e.isTrusted);
-        this.baseUtils.arrayLength(3, this.ce, this.getCurrnetData(e, c));
+        baseUtils.arrayLength(3, this.ce, this.getCurrnetData(e, c));
     };
 
     startCb(e) {
@@ -576,12 +547,12 @@ class SmashUtils {
         let l = s[0] || {};
         let f = this.getid(e);
         this.setIdData(f, "session", this.$);
-        l.start_time = this.baseUtils.getCurrentTime();
+        l.start_time = baseUtils.getCurrentTime();
         const that = this
             ["radiusX", "radiusY", "force", "start_time"].forEach(function (e) {
             that.setIdData(f, e, l[e] ? l[e] : "a");
         });
-        this.baseUtils.arrayLength(3, this.ce, this.getCurrnetData(e, f));
+        baseUtils.arrayLength(3, this.ce, this.getCurrnetData(e, f));
     };
 
     addListener() {
@@ -589,16 +560,16 @@ class SmashUtils {
     };
 
     addEvent() {
-        this.document.addEventListener(this.ne, this.startCb);
-        this.document.addEventListener(this.re, this.endCb);
-        this.document.addEventListener(this.oe, this.moveCb);
-        this.document.addEventListener("click", this.clickCb);
+        document.addEventListener(this.ne, this.startCb);
+        document.addEventListener(this.re, this.endCb);
+        document.addEventListener(this.oe, this.moveCb);
+        document.addEventListener("click", this.clickCb);
     };
 
     getBlog() {
         try {
-            let r = this.baseUtils.getAppVersion();
-            this.window.checkVersion = function (r) {
+            let r = baseUtils.getAppVersion();
+            window.checkVersion = function (r) {
                 try {
                     if (r && (r !== "a")) {
                         let a = "9.5.2".split("."), u = r.split(".");
@@ -612,9 +583,9 @@ class SmashUtils {
                 }
             }
 
-            if (this.window.checkVersion(r)) {
+            if (window.checkVersion(r)) {
                 const that = this
-                this.window.callBackNameSmash = function (r) {
+                window.callBackNameSmash = function (r) {
                     var a = JSON.parse((r || "{}"));
                     if (a.data) {
                         that.Ee = a.data.blog;
@@ -645,17 +616,17 @@ class SmashUtils {
                     callBackId: "smash"
                 };
                 try {
-                    if (this.baseUtils.isIOS()) {
+                    if (baseUtils.isIOS()) {
                         a.routerURL = "router://jdjmamodule/gethcb";
                         a.routerParam = {};
-                        this.window.webkit && this.window.webkit.messageHandlers.JDAppUnite.postMessage({
+                        window.webkit && window.webkit.messageHandlers.JDAppUnite.postMessage({
                             method: "callsyncroutermodulewithparams",
                             params: JSON.stringify(a)
                         })
                     }
-                    if (this.baseUtils.isAndroid()) {
+                    if (baseUtils.isAndroid()) {
                         a.routerURL = "router://com.jingdong.app.mall.jma.jsjmamanager/getblog";
-                        this.window.JDAppUnite && this.window.JDAppUnite.callSyncRouterModuleWithParams(JSON.stringify(a))
+                        window.JDAppUnite && window.JDAppUnite.callSyncRouterModuleWithParams(JSON.stringify(a))
                     }
                 } catch (r) {
                     this.Ee = "f";
@@ -682,34 +653,34 @@ class SmashUtils {
 
     getFpv() {
         try {
-            var i = this.baseUtils.isApp("jd"), a = this.baseUtils.getAppVersion(), u = !1;
+            var i = baseUtils.isApp("jd"), a = baseUtils.getAppVersion(), u = !1;
             if (i) {
-                u = this.baseUtils.isIOS() && this.baseUtils.versionCompare(a, "10.1.6") > -1 || this.baseUtils.isAndroid() && this.baseUtils.versionCompare(a, "10.2.0") > -1
+                u = baseUtils.isIOS() && baseUtils.versionCompare(a, "10.1.6") > -1 || baseUtils.isAndroid() && baseUtils.versionCompare(a, "10.2.0") > -1
             }
             if (u) {
-                this.window.getSoftFingerprintBack = function (e) {
+                window.getSoftFingerprintBack = function (e) {
                     var a = JSON.parse(e || "{}").data || "";
-                    this.document.cookie = "shshshfpv=".concat(a, ";domain=.jd.com;path=/;expires=").concat(new Date((new Date().getTime() + 864e9)).toGMTString());
+                    document.cookie = "shshshfpv=".concat(a, ";domain=.jd.com;path=/;expires=").concat(new Date((new Date().getTime() + 864e9)).toGMTString());
                 };
                 var c = {
                     callBackName: "getSoftFingerprintBack",
                     callBackId: new Date().getTime()
                 };
                 try {
-                    if (this.baseUtils.isIOS()) {
+                    if (baseUtils.isIOS()) {
                         c.routerURL = "router://JDJMAModule/getwhwswswws";
                         c.routerParam = {};
-                        this.window.webkit && this.window.webkit.messageHandlers.JDAppUnite.postMessage({
+                        window.webkit && window.webkit.messageHandlers.JDAppUnite.postMessage({
                             method: "callSyncRouterModuleWithParams",
                             params: JSON.stringify(c)
                         })
                     }
-                    if (this.baseUtils.isAndroid()) {
+                    if (baseUtils.isAndroid()) {
                         c.routerURL = "router://com.jingdong.app.mall.jma.JSJMAManager/getSoftFingerprint";
-                        this.window.JDAppUnite && this.window.JDAppUnite.callRouterModuleWithParams(JSON.stringify(c))
+                        window.JDAppUnite && window.JDAppUnite.callRouterModuleWithParams(JSON.stringify(c))
                     }
                 } catch (e) {
-                    this.document.cookie = "shshshfpv=;domain=.jd.com;path=/;expires=".concat(new Date((new Date().getTime() + 864e9)).toGMTString());
+                    document.cookie = "shshshfpv=;domain=.jd.com;path=/;expires=".concat(new Date((new Date().getTime() + 864e9)).toGMTString());
                 }
             }
         } catch (e) {
@@ -722,15 +693,15 @@ class SmashUtils {
     };
 
     async getInfo() {
-        if (!this.baseUtils.isDuringDate(this.Je, this.Fe)) {
+        if (!baseUtils.isDuringDate(this.Je, this.Fe)) {
             try {
                 try {
-                    let {data: t} = await this.baseUtils.ajax({
+                    let {data: t} = await baseUtils.ajax({
                         type: "POST",
-                        url: this.baseUtils.requestUrl.getInfo,
+                        url: baseUtils.requestUrl.getInfo,
                         data: "content=".concat(JSON.stringify({
                             appname: "smashH5pv",
-                            whwswswws: this.baseUtils.getCookie("shshshfpb"),
+                            whwswswws: baseUtils.getCookie("shshshfpb"),
                             jdkey: "",
                             body: {}
                         }))
@@ -744,10 +715,10 @@ class SmashUtils {
                         });
                     } else {
                         var c = t.whwswswws || "";
-                        this.document.cookie = "shshshfpb=".concat(c, ";domain=.jd.com;path=/;expires=").concat(new Date(new Date().getTime() + 864e9).toGMTString());
+                        document.cookie = "shshshfpb=".concat(c, ";domain=.jd.com;path=/;expires=").concat(new Date(new Date().getTime() + 864e9).toGMTString());
                     }
                 } catch (t) {
-                    this.document.cookie = "shshshfpb=;domain=.jd.com;path=/;expires=".concat(new Date((new Date().getTime() + 864e9)).toGMTString());
+                    document.cookie = "shshshfpb=;domain=.jd.com;path=/;expires=".concat(new Date((new Date().getTime() + 864e9)).toGMTString());
                     this.getInterfaceData({
                         funcName: "other",
                         real_msg: "inner.getInfo.catch",
@@ -767,7 +738,7 @@ class SmashUtils {
     getAppOs() {
         try {
             const that = this;
-            this.window.getAppOsInformation = function (t) {
+            window.getAppOsInformation = function (t) {
                 try {
                     var a = JSON.parse(t);
                     if (a.status === "0") {
@@ -793,7 +764,7 @@ class SmashUtils {
                             });
                         }
                         that.Ae = [l, j, v, g, w, _, A];
-                        that.baseUtils.isIOS() ? that.Ce = O : that.baseUtils.isAndroid() && (that.Ce = C);
+                        baseUtils.isIOS() ? that.Ce = O : baseUtils.isAndroid() && (that.Ce = C);
                     }
                 } catch (e) {
                     that.getInterfaceData({
@@ -805,27 +776,27 @@ class SmashUtils {
             }
 
             this.Te = "u";
-            if (this.baseUtils.isAndroid()) {
-                if (this.window.JDAppUnite) {
+            if (baseUtils.isAndroid()) {
+                if (window.JDAppUnite) {
                     this.Te = "t";
-                    this.window.JDAppUnite.getPhoneBasicInfo("getAppOsInformation");
+                    window.JDAppUnite.getPhoneBasicInfo("getAppOsInformation");
                 }
                 this.je = 2
             }
-            if (this.baseUtils.isIOS()) {
-                if (this.window.webkit && this.window.webkit.messageHandlers && this.window.webkit.messageHandlers.JDAppUnite) {
+            if (baseUtils.isIOS()) {
+                if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.JDAppUnite) {
                     this.Te = "t";
                     var o = {
                         method: "getPhoneBasicInfo",
                         params: "getAppOsInformation"
                     };
-                    this.window.webkit.messageHandlers.JDAppUnite.postMessage(o);
+                    window.webkit.messageHandlers.JDAppUnite.postMessage(o);
                 }
                 this.je = 2;
             }
         } catch (t) {
             this.Ce = "f";
-            this.Ae = this.baseUtils.getFailedArr(7);
+            this.Ae = baseUtils.getFailedArr(7);
             this.getInterfaceData({
                 funcName: "other",
                 real_msg: "inner.getAppOs",
@@ -837,7 +808,7 @@ class SmashUtils {
     handlerJrInfo(e) {
         var i = typeof e == "object" ? e : JSON.parse(e);
         if (i.errorCode) {
-            this.qe = this.baseUtils.getFailedArr(7);
+            this.qe = baseUtils.getFailedArr(7);
             this.getInterfaceData({
                 funcName: "other",
                 real_msg: "getJrAppOs.errorCode",
@@ -853,20 +824,20 @@ class SmashUtils {
                 _ = u.deviceId || "a",
                 A = u.eufv || "a",
                 C = u.channelInfo || "a",
-                E = this.baseUtils.md5Str(_).slice(-16);
+                E = baseUtils.md5Str(_).slice(-16);
             this.qe = [s, l, h, m, y, E, A];
             var O = C;
             if (C && C.indexOf("#") > -1) {
                 O = C.slice(0, C.indexOf("#"));
             }
-            O = this.baseUtils.md5Str(O + E);
+            O = baseUtils.md5Str(O + E);
             this.Re = O.slice(-16);
             var k = {
                 fbInfo: this.qe,
                 jrStackInfo: this.Re
             };
-            if (!this.arrayEquals(this.qe, this.He) && this.window.localStorage) {
-                this.window.localStorage.setItem("jrInfo", JSON.stringify(k));
+            if (!this.arrayEquals(this.qe, this.He) && window.localStorage) {
+                window.localStorage.setItem("jrInfo", JSON.stringify(k));
             }
             this.getInterfaceData({
                 funcName: "other",
@@ -877,8 +848,8 @@ class SmashUtils {
     };
 
     getJrInfo() {
-        if (this.baseUtils.isApp("jdjr")) {
-            if (this.window.JrBridge) {
+        if (baseUtils.isApp("jdjr")) {
+            if (window.JrBridge) {
                 this.Me = "t";
                 this.ze = 1;
                 try {
@@ -887,7 +858,7 @@ class SmashUtils {
                         that.handlerJrInfo(t);
                     });
                 } catch (t) {
-                    this.qe = this.baseUtils.getFailedArr(7);
+                    this.qe = baseUtils.getFailedArr(7);
                     this.getInterfaceData({
                         funcName: "other",
                         real_msg: "JrBridge.getDeviceInfo",
@@ -902,15 +873,15 @@ class SmashUtils {
 
     getJrAppOs() {
         try {
-            if (!this.window.jsBridgeV3) {
+            if (!window.jsBridgeV3) {
                 this.Me = "u";
                 return;
             }
-            if (!this.window.defer) {
-                this.window.defer = jsBridgeV3.onReady();
+            if (!window.defer) {
+                window.defer = jsBridgeV3.onReady();
             }
-            if (this.window.defer) {
-                if (this.baseUtils.isApp("jdjr")) {
+            if (window.defer) {
+                if (baseUtils.isApp("jdjr")) {
                     this.Me = "t";
                 }
                 this.ze = 1;
@@ -930,7 +901,7 @@ class SmashUtils {
             }
         } catch (t) {
             this.Me = "u";
-            this.qe = this.baseUtils.getFailedArr(7);
+            this.qe = baseUtils.getFailedArr(7);
             this.getInterfaceData({
                 funcName: "other",
                 real_msg: "inner.getJrAppOs",
@@ -942,7 +913,7 @@ class SmashUtils {
     getFbStorage(e) {
         try {
             if (this.arrayEquals(e, this.He) || this.arrayEquals(e, this.We)) {
-                let a = this.window.localStorage && this.window.localStorage.getItem("jrInfo");
+                let a = window.localStorage && window.localStorage.getItem("jrInfo");
                 if (a) {
                     let u = JSON.parse(a);
                     this.qe = u.fbInfo || "";
@@ -966,19 +937,19 @@ class SmashUtils {
 
     getLocalData() {
         try {
-            this.pe = "" + this.baseUtils.getCookieEnabled() + this.baseUtils.getSessionStorage() + this.baseUtils.getLocalStorage() + this.baseUtils.getIsMobileOne() + this.baseUtils.getIsMobileTwo() + this.baseUtils.getIsNodeEnv() + this.baseUtils.getHasNodeVM2();
-            this.de = this.baseUtils.getExistWebdriver();
-            this.he = this.baseUtils.getDetectPhantomjs();
+            this.pe = "" + baseUtils.getCookieEnabled() + baseUtils.getSessionStorage() + baseUtils.getLocalStorage() + baseUtils.getIsMobileOne() + baseUtils.getIsMobileTwo() + baseUtils.getIsNodeEnv() + baseUtils.getHasNodeVM2();
+            this.de = baseUtils.getExistWebdriver();
+            this.he = baseUtils.getDetectPhantomjs();
             this.ve = this.reportInterfaceData && (typeof this.reportInterfaceData == "function") ? "t" : "f";
-            this.me = this.baseUtils.getNaviParam("platform");
-            this.ge = this.baseUtils.getNaviParam("product");
-            this.ye = this.baseUtils.getNaviParam("productSub");
-            this.we = this.baseUtils.getNaviParam("appName");
-            this.be = this.baseUtils.getNaviParam("vendor");
-            this.xe = this.baseUtils.getNaviParam("vendorSub");
-            this._e = this.baseUtils.getAppBuild();
-            this.Se = this.baseUtils.getScreen();
-            this.Ie = this.baseUtils.getExistMiniblink();
+            this.me = baseUtils.getNaviParam("platform");
+            this.ge = baseUtils.getNaviParam("product");
+            this.ye = baseUtils.getNaviParam("productSub");
+            this.we = baseUtils.getNaviParam("appName");
+            this.be = baseUtils.getNaviParam("vendor");
+            this.xe = baseUtils.getNaviParam("vendorSub");
+            this._e = baseUtils.getAppBuild();
+            this.Se = baseUtils.getScreen();
+            this.Ie = baseUtils.getExistMiniblink();
         } catch (t) {
             this.getInterfaceData({
                 funcName: "other",
@@ -991,7 +962,7 @@ class SmashUtils {
     async getLoadData() {
         try {
             this.Pe = !0;
-            this.R = this.baseUtils.getCurrentTime();
+            this.R = baseUtils.getCurrentTime();
             this.Z = !0;
             await this.reportData();
             await this.reportInterfaceData();
@@ -1012,8 +983,8 @@ class SmashUtils {
             d += "1";
             d += "0";
             try {
-                var s = typeof window != "undefined" && typeof this.window.JDAppUnite != "undefined",
-                    f = window && this.window.webkit && this.window.webkit.messageHandlers && this.window.webkit.messageHandlers.JDAppUnite;
+                var s = typeof window != "undefined" && typeof window.JDAppUnite != "undefined",
+                    f = window && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.JDAppUnite;
                 d += s || f ? "1" : "0";
             } catch (e) {
                 d += "0";
@@ -1036,10 +1007,10 @@ class SmashUtils {
     getFillVal() {
         try {
             var r = "u",
-                i = this.navigator.userAgent.toLowerCase(),
-                a = String(this.navigator.platform).toLowerCase().indexOf("linux") > -1,
-                u = this.navigator.platform == "Win32",
-                c = this.navigator.platform == "MacIntel";
+                i = navigator.userAgent.toLowerCase(),
+                a = String(navigator.platform).toLowerCase().indexOf("linux") > -1,
+                u = navigator.platform == "Win32",
+                c = navigator.platform == "MacIntel";
             a ? r = "l" : u ? r = "w" : c ? r = "i" : /iphone|ipad|ipod/.test(i) && (r = "m");
             var s = "";
             s += "0";
@@ -1065,21 +1036,21 @@ class SmashUtils {
         try {
             var w = Date.parse(new Date()).toString();
             w = w.slice(0, 10);
-            var c = this.document.cookie.split("; ");
+            var c = document.cookie.split("; ");
             var b = this.getFillVal();
             if (e) {
                 var s = "".concat(w, ".0.").concat(c.length),
-                    f = this.baseUtils.getCrcCode(s),
+                    f = baseUtils.getCrcCode(s),
                     l = "".concat(s, ".").concat(f).concat(b);
-                this.document.cookie = "joyya=".concat(l, ";domain=.jd.com;path=/;expires=").concat(new Date((new Date().getTime() + 864e9)).toGMTString());
+                document.cookie = "joyya=".concat(l, ";domain=.jd.com;path=/;expires=").concat(new Date((new Date().getTime() + 864e9)).toGMTString());
             } else {
-                var y = this.baseUtils.getCookie("joyya");
+                var y = baseUtils.getCookie("joyya");
                 var g = 0;
                 y && (g = y.split(".")[0]);
                 var v = "".concat(g, ".").concat(w, ".").concat(c.length);
-                var h = this.baseUtils.getCrcCode(v);
+                var h = baseUtils.getCrcCode(v);
                 var m = "".concat(v, ".").concat(h).concat(b);
-                this.document.cookie = "joyya=".concat(m, ";domain=.jd.com;path=/;expires=").concat(new Date(new Date().getTime() + 864e9).toGMTString());
+                document.cookie = "joyya=".concat(m, ";domain=.jd.com;path=/;expires=").concat(new Date(new Date().getTime() + 864e9).toGMTString());
             }
         } catch (e) {
             this.getInterfaceData({
@@ -1099,7 +1070,7 @@ class SmashUtils {
                 g = n.onSign,
                 y = n.onRequestTokenRemotely,
                 w = n.onRequestToken;
-            if (!this.baseUtils.isNotEmptyString(h)) {
+            if (!baseUtils.isNotEmptyString(h)) {
                 this.getInterfaceData({
                     funcName: "initial",
                     real_msg: "参数appid不能为空",
@@ -1135,7 +1106,7 @@ class SmashUtils {
             if (f) {
                 this.Ge = !0;
                 await this.init({
-                    appid: f, uid: this.baseUtils.getCookiePin()
+                    appid: f, uid: baseUtils.getCookiePin()
                 })
             }
             if (l && !this.Xe) {
@@ -1161,7 +1132,7 @@ class SmashUtils {
             !this.Pe && await this.getLoadData();
             this.Q = (this.Q + 1);
             this.clearjoyytoken(i.appid, !0);
-            this.$ = this.$ || this.baseUtils.getTouchSession();
+            this.$ = this.$ || baseUtils.getTouchSession();
             this.P = {
                 ids: []
             };
@@ -1236,14 +1207,14 @@ class SmashUtils {
                 if (S === "1") {
                     r.joylog = "";
                 } else {
-                    var C = this.baseUtils.md5Str(c + s),
+                    var C = baseUtils.md5Str(c + s),
                         O = {
                             data: {
                                 random: C
                             }
                         };
-                    var j = await this.get_risk_result(O).log;
-                    r.joylog = "".concat(C, "*").concat(j);
+                    var j = await this.get_risk_result(O);
+                    r.joylog = "".concat(C, "*").concat(j.log);
                 }
             }
             if (this.Ve) {
@@ -1289,7 +1260,7 @@ class SmashUtils {
         var u = e.data || {};
 
         this.T += 1;
-        var y = this.baseUtils.getCurrentTime(),
+        var y = baseUtils.getCurrentTime(),
             b = {},
             N = "",
             E = "",
@@ -1304,13 +1275,13 @@ class SmashUtils {
                 q = this.P.appid || "";
             this.clearjoyytoken(q);
             var W = "",
-                K = this.baseUtils.getTokem("joyytokem", q),
+                K = baseUtils.getTokem("joyytokem", q),
                 J = K.joyytokenVal, F = K.xcdVal;
             if (q && q !== "undefined" && J) {
                 l = J.slice(q.length);
                 W = J
             } else {
-                l = this.baseUtils.getCookiePin();
+                l = baseUtils.getCookiePin();
                 this.B.encrypt_id = this.B.default_encrypt_id;
                 this.B.cf_v = this.B.default_cf_v
             }
@@ -1327,22 +1298,22 @@ class SmashUtils {
             (i === void 0) && (oe = 2);
             (M.indexOf(i) === -1) && (oe = 3);
             (this.ze === 0) && (this.ze = 1, this.getJrInfo());
-            y = this.baseUtils.getCurrentTime() + X;
+            y = baseUtils.getCurrentTime() + X;
             g = re && (re.is_trust === !1) ? 0 : 1;
             g = (G === "1") ? g : 1;
-            f = this.baseUtils.getRandomWord(10);
+            f = baseUtils.getRandomWord(10);
             var ie, ae = Y.split(","),
                 le = ne.split(","),
                 ge = [le[2], le[3]],
-                ye = this.baseUtils.objToString2(this.baseUtils.RecursiveSorting(u)),
+                ye = baseUtils.objToString2(baseUtils.RecursiveSorting(u)),
                 we = "",
                 xe = !1,
-                je = this.baseUtils.getInRange(ae, le[0], le[1]);
+                je = baseUtils.getInRange(ae, le[0], le[1]);
             ie = le[2];
             for (var ke = 0; ke < ie.length; ke++) {
-                var He = ie[ke] === "*" ? je[this.baseUtils.getRandomInt(0, je.length - 1)] : ie[ke];
+                var He = ie[ke] === "*" ? je[baseUtils.getRandomInt(0, je.length - 1)] : ie[ke];
                 we += He;
-                var Pe = this.baseUtils.encrypt(He, f, y);
+                var Pe = baseUtils.encrypt(He, f, y);
 
                 if (Pe == null || typeof Pe == "number" && isNaN(Pe)) {
                     xe = true;
@@ -1358,11 +1329,11 @@ class SmashUtils {
             var We = le[3];
             p = We == "1" ? CryptoJS.SHA1(s).toString().toUpperCase() : CryptoJS.SHA256(s).toString().toUpperCase()
             this.setIdData(i, "data", ye);
-            h = this.baseUtils.getCrcCode(p);
-            var Ke = this.baseUtils.getCallStack(),
-                Je = this.baseUtils.md5Str(this.Ce),
+            h = baseUtils.getCrcCode(p);
+            var Ke = baseUtils.getCallStack(),
+                Je = baseUtils.md5Str(this.Ce),
                 Fe = (Ke.slice(16) + Je.slice(16));
-            this.Me == "t" && (this.getFbStorage(this.qe), !this.Re && (this.Re = this.baseUtils.md5Str("").slice(-16)), Fe = (Fe.slice(0, -16) + this.Re));
+            this.Me == "t" && (this.getFbStorage(this.qe), !this.Re && (this.Re = baseUtils.md5Str("").slice(-16)), Fe = (Fe.slice(0, -16) + this.Re));
             Fe = this["handleCsVal"](y, Fe);
 
             b = {
@@ -1372,19 +1343,19 @@ class SmashUtils {
                 ss: this.$ || "a",
                 wed: this.pe,
                 wea: "" + this.de + this.he + this.ve + this.Be + this.Te + this.Le + this.Ie + "a" + this.Me,
-                pdn: this.baseUtils["getPageDomNum"](),
+                pdn: baseUtils["getPageDomNum"](),
                 jj: oe,
                 cs: Fe || "a",
                 np: this.me,
                 t: y,
-                jk: this.baseUtils.getJdKey(),
-                fpb: this.baseUtils.getCookie("shshshfpb"),
+                jk: baseUtils.getJdKey(),
+                fpb: baseUtils.getCookie("shshshfpb"),
                 nv: this.be,
                 nav: this._e,
                 scr: this.Se,
                 ro: this.Ae,
-                ioa: this.baseUtils["getIosAppDetail"](),
-                aj: this.baseUtils["getAutoJs"](),
+                ioa: baseUtils["getIosAppDetail"](),
+                aj: baseUtils["getAutoJs"](),
                 ci: this.ee,
                 cf_v: Z,
                 bd: ye,
@@ -1397,11 +1368,11 @@ class SmashUtils {
 
             "t" === this.Me && (b.fb = this.qe);
             try {
-                var Ye = this.baseUtils["xorEncrypt"](JSON.stringify(b), O || this.De);
+                var Ye = baseUtils["xorEncrypt"](JSON.stringify(b), O || this.De);
                 k = Ye.xorEncrypted.length;
                 D = Ye["totalTime"];
-                v = this.baseUtils["utoa"](Ye.xorEncrypted);
-                m = this.baseUtils.getCrcCode(v);
+                v = baseUtils["utoa"](Ye.xorEncrypted);
+                m = baseUtils.getCrcCode(v);
             } catch (e) {
                 k = "c";
                 D = "c";
@@ -1417,8 +1388,8 @@ class SmashUtils {
             });
             this.ue = [];
             this.ce = [];
-            this.$ = this.baseUtils.getTouchSession();
-            this.fe = this.baseUtils.getCurrentTime();
+            this.$ = baseUtils.getTouchSession();
+            this.fe = baseUtils.getCurrentTime();
             this.se = [0, 0, 0];
             await this.getjoyytoken(q);
             var tt = "".concat(y, "|abcdefg|").concat(g).concat(f).concat(l, "|abcdefg|").concat(N, "|abcdefg|").concat(p, "|abcdefg|").concat(h, "|abcdefg|").concat(E, "|abcdefg|").concat(v, "|abcdefg|").concat(m);
@@ -1436,12 +1407,12 @@ class SmashUtils {
             !O && (E = "L");
             (N == "") && (E = "L", O = "");
             try {
-                var st = this.baseUtils["xorEncrypt"](JSON.stringify(b), (O || this.De)), ft = st.xorEncrypted,
+                var st = baseUtils["xorEncrypt"](JSON.stringify(b), (O || this.De)), ft = st.xorEncrypted,
                     lt = st.totalTime;
                 k = ft.length;
                 D = lt;
-                v = this.baseUtils.utoa(ft);
-                m = this.baseUtils.getCrcCode(v);
+                v = baseUtils.utoa(ft);
+                m = baseUtils.getCrcCode(v);
             } catch (e) {
                 k = "c", D = "c";
             }
@@ -1465,7 +1436,7 @@ class SmashUtils {
                 })
                 return "";
             }
-            return this.baseUtils.getRandomWord(Math.min(15, e), !0);
+            return baseUtils.getRandomWord(Math.min(15, e), !0);
         } catch (e) {
             this.getInterfaceData({
                 funcName: "other",
@@ -1479,7 +1450,7 @@ class SmashUtils {
     getHash(e) {
         try {
             if (typeof e === "string") {
-                return this.baseUtils.md5Str(e).slice(8, -8)
+                return baseUtils.md5Str(e).slice(8, -8)
             } else {
                 this.getInterfaceData({
                     funcName: "other",

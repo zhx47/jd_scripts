@@ -33,10 +33,14 @@ async function parse(urlString) {
     return Object.assign(result, {plainUrl: data.data})
 }
 
+function test() {
+    parse('https://lzkj-isv.isvjcloud.com/prod/cc/interaction/v1/?shareKey=a053bd8cc0c3f8c892ff5f8fe97b1894')
+        .then((res) => {
+            console.log(res)
+        })
+}
 
-module.exports.shareParseV1 = parse
-
-parse('https://lzkj-isv.isvjcloud.com/prod/cc/interaction/v1/?shareKey=a053bd8cc0c3f8c892ff5f8fe97b1894')
-    .then((res) => {
-        console.log(res)
-    })
+module.exports = {
+    shareParseV1: parse,
+    test
+}

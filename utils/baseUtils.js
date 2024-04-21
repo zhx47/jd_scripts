@@ -1,5 +1,10 @@
 const CryptoJS = require("crypto-js");
-const {JSDOM} = require("jsdom");
+const {JSDOM,ResourceLoader} = require("jsdom");
+const {CookieJar, Cookie} = require("tough-cookie");
+const axios = require("axios");
+const {HttpCookieAgent, HttpsCookieAgent} = require('http-cookie-agent/http')
+const {getBaseCookie} = require("./baseCookie");
+
 const crc32 = require('crc').crc32;
 
 
@@ -26,10 +31,10 @@ class BaseUtils {
             }
         },
         getStorage: (e) => {
-            return JSON.parse(this.localStorage.getItem(e));
+            return JSON.parse(localStorage.getItem(e));
         },
         setStorage: (e, t) => {
-            this.localStorage.setItem(e, JSON.stringify(t));
+            localStorage.setItem(e, JSON.stringify(t));
         },
         getIosFingerprint: function () {
             console.log('不支持获取IOS指纹')
@@ -58,7 +63,7 @@ class BaseUtils {
         },
         getAppFingerprint: () => {
             try {
-                var o = this.navigator.userAgent.toLowerCase();
+                var o = navigator.userAgent.toLowerCase();
 
                 if (/iphone|ipad|ios|ipod/.test(o)) {
                     this.webview.getIosFingerprint();
@@ -72,7 +77,7 @@ class BaseUtils {
             return JSON.stringify(this.webview.getStorage("unionwsws"));
         },
         isWKWebView: () => {
-            return this.navigator.userAgent.match(/supportJDSHWK/i) || 1 === this.window._is_jdsh_wkwebview;
+            return navigator.userAgent.match(/supportJDSHWK/i) || 1 === window._is_jdsh_wkwebview;
         }
     }
 
@@ -85,9 +90,26 @@ class BaseUtils {
             }
         }
 
+        let jar = new CookieJar();
+
+        global.api = axios.create({
+            httpAgent: new HttpCookieAgent({
+                cookies: {jar}
+            }),
+            httpsAgent: new HttpsCookieAgent({
+                cookies: {jar},
+                ciphers: 'TLS_AES_256_GCM_SHA384'
+            })
+        });
+
+        const resourceLoader = new ResourceLoader({
+            userAgent
+        });
+
         let dom = new JSDOM(``, {
             url,
-            userAgent,
+            resources: resourceLoader,
+            cookieJar: jar
         });
 
         global.window = dom.window
@@ -122,6 +144,23 @@ class BaseUtils {
 
         global.localStorage = window.localStorage
         global.history = window.history
+
+        if (cookieStr) {
+            const cookies = cookieStr.split(';');
+            cookies.forEach((cookieString) => {
+                if (cookieString) {
+                    global.document.cookie = cookieString.concat(";domain=.jd.com;path=/;expires=2099-04-16T07:09:14.000Z");
+                }
+            });
+
+            let baseCookie = getBaseCookie(userAgent, url);
+            const baseCookies = baseCookie.split(';');
+            baseCookies.forEach((cookieString) => {
+                if (cookieString) {
+                    global.document.cookie = cookieString.concat(";domain=.jd.com;path=/;expires=2099-04-16T07:09:14.000Z");
+                }
+            });
+        }
     }
 
     // 解析cookie字符串，提取pt_pin
@@ -151,7 +190,7 @@ class BaseUtils {
     atobFunc(e) {
         try {
             // this.atobPolyfill();
-            return this.window.atob(e);
+            return window.atob(e);
         } catch (e) {
             return "";
         }
@@ -173,7 +212,7 @@ class BaseUtils {
     }
 
     isFirefox() {
-        return this.navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
+        return navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
     }
 
     getCallStack() {
@@ -275,20 +314,20 @@ class BaseUtils {
     }
 
     getUa() {
-        return this.navigator.userAgent;
+        return navigator.userAgent;
     }
 
     isMobile() {
         return this.getUa().match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
     }
 
-    async ajax(e) {
-        return await this.api.request({
+    ajax(e) {
+        return api({
             method: e.type,
             url: e.url,
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
-                'user-agent': 'Mozilla/5.0 (Linux; Android 13; 23054RA19C Build/TP1A.220624.014; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/122.0.6261.119 Mobile Safari/537.36'
+                'user-agent': window.navigator.userAgent
             },
             data: e.data
         });
@@ -350,13 +389,13 @@ class BaseUtils {
 
     clearTokem(e, t) {
         try {
-            var o = this.window.localStorage.getItem(e);
+            var o = window.localStorage.getItem(e);
 
             if (o) {
                 var i = JSON.parse(o);
                 if (i[t]) {
                     delete i[t];
-                    this.window.localStorage.setItem(e, JSON.stringify(i))
+                    window.localStorage.setItem(e, JSON.stringify(i))
                 }
             }
         } catch (e) {
@@ -368,7 +407,7 @@ class BaseUtils {
         var u = "";
 
         try {
-            var c = this.window.localStorage.getItem(e);
+            var c = window.localStorage.getItem(e);
 
             if (c) {
                 var s = JSON.parse(c);
@@ -389,10 +428,10 @@ class BaseUtils {
                     if (this.toTimestamp(p) > Date.now()) {
                         i = l;
                         u = this.getDecode(v || "");
-                        this.document.cookie = "".concat(e, "=").concat(l, ";domain=.jd.com;path=/;expires=").concat(p);
+                        document.cookie = "".concat(e, "=").concat(l, ";domain=.jd.com;path=/;expires=").concat(p);
                     } else {
                         delete s[t];
-                        this.window.localStorage.setItem(e, JSON.stringify(s));
+                        window.localStorage.setItem(e, JSON.stringify(s));
                     }
                 }
             }
@@ -448,7 +487,7 @@ class BaseUtils {
     getCookie(e) {
         try {
             var o = new RegExp("(^| )" + e + "=([^;]*)(;|$)");
-            var i = this.document.cookie.match(o);
+            var i = document.cookie.match(o);
 
             if (i) {
                 if (i.length > 2 && i[2]) {
@@ -659,7 +698,7 @@ class BaseUtils {
     getPluginsNum() {
         var t;
         try {
-            t = this.window.navigator.plugins.length;
+            t = window.navigator.plugins.length;
         } catch (e) {
             t = "c";
         }
@@ -667,7 +706,7 @@ class BaseUtils {
     }
 
     getGPUMes() {
-        this.window.localStorage.gpuAll = '{"gpuServiceProvider":"ARM","gpuBrand":"Mali-G610 MC6"}'
+        window.localStorage.gpuAll = '{"gpuServiceProvider":"ARM","gpuBrand":"Mali-G610 MC6"}'
         return ["ARM", "Mali-G610 MC6"];
     }
 
@@ -675,7 +714,7 @@ class BaseUtils {
         var t = "";
 
         try {
-            t = this.window.navigator.languages.length;
+            t = window.navigator.languages.length;
         } catch (e) {
         }
 
@@ -953,7 +992,7 @@ class BaseUtils {
 
     getNaviParam(e) {
         return this.getExceptData(function () {
-            return this.navigator[e] || "u";
+            return navigator[e] || "u";
         });
     }
 
@@ -998,12 +1037,12 @@ class BaseUtils {
 
         try {
             o = [
-                this.document.querySelectorAll("script").length,
-                this.document.querySelectorAll("div").length,
-                this.document.querySelectorAll("link").length,
-                this.document.querySelectorAll("meta").length,
-                this.history.length,
-                this.navigator.maxTouchPoints
+                document.querySelectorAll("script").length,
+                document.querySelectorAll("div").length,
+                document.querySelectorAll("link").length,
+                document.querySelectorAll("meta").length,
+                history.length,
+                navigator.maxTouchPoints
             ];
         } catch (e) {
             o = this.getExceptArr(6);
@@ -1023,21 +1062,20 @@ class BaseUtils {
     }
 
     getAppBuild() {
-        var e = this;
         return this.getExceptData(function () {
-            return e.navigator.userAgent.match(/appBuild\/([\d]+)/i)[1];
+            return navigator.userAgent.match(/appBuild\/([\d]+)/i)[1];
         });
     }
 
     getAppVersion() {
-        var n = this.navigator.userAgent;
+        var n = navigator.userAgent;
         return n && n.indexOf("jdapp") === 0 && n.split(";")[2] || null;
     }
 
     getNaviConnection() {
         var t;
         try {
-            t = [this.navigator.connection.downlink || "u", this.navigator.connection.effectiveType || "u"];
+            t = [navigator.connection.downlink || "u", navigator.connection.effectiveType || "u"];
         } catch (r) {
             t = this.getExceptArr(2);
         }
@@ -1047,7 +1085,7 @@ class BaseUtils {
     getScreen() {
         var e;
         try {
-            var n = this.window.screen;
+            var n = window.screen;
             e = [n.height, n.width];
         } catch (n) {
             e = this.getExceptArr(6);
@@ -1111,7 +1149,7 @@ class BaseUtils {
 
     utoa(e) {
         // this.btoaPolyfill();
-        return this.window.btoa(unescape(encodeURIComponent(e)));
+        return window.btoa(unescape(encodeURIComponent(e)));
     }
 
     // btoaPolyfill() {
@@ -1150,17 +1188,17 @@ class BaseUtils {
     }
 
     isApp(e) {
-        var i = this.navigator.userAgent;
+        var i = navigator.userAgent;
         return e === "jd" ? /^jdapp/i.test(i) : e === "jdjr" && /JDJR-App/i.test(i);
     }
 
     isAndroid() {
-        var o = this.navigator.userAgent;
+        var o = navigator.userAgent;
         return o.indexOf("Android") > -1 || o.indexOf("Linux") > -1;
     }
 
     isIOS() {
-        return !!this.navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+        return !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     }
 
     versionCompare(e, t) {

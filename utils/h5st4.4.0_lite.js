@@ -2,8 +2,6 @@ const CryptoJS = require("crypto-js");
 const ADLER32 = require("adler-32");
 const {BaseH5st} = require("./baseH5st");
 const qs = require("qs");
-const https = require("https");
-const axios = require("axios");
 
 class H5st extends BaseH5st {
     constructor(url, cookieStr, userAgent, config) {
@@ -364,16 +362,13 @@ class H5st extends BaseH5st {
     }
 }
 
-module.exports.H5st = H5st
-
-
-async function main() {
+async function test() {
     var cookieStr = "",
         userAgent = "";
     var h5stObj = new H5st("https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html?ids=501730512%2C501676150&navh=49&stath=37&tttparams=wUQ86eyJhZGRyZXNzSWQiOjAsImRMYXQiOjAsImRMbmciOjAsImdMYXQiOiIzOS45NDQwOTMiLCJnTG5nIjoiMTE2LjQ4MjI3NiIsImdwc19hcmVhIjoiMF8wXzBfMCIsImxhdCI6MCwibG5nIjowLCJtb2RlbCI6IlJlZG1pIE5vdGUgMTJUIFBybyIsInBvc0xhdCI6IjM5Ljk0NDA5MyIsInBvc0xuZyI6IjExNi40ODIyNzYiLCJwcnN0YXRlIjoiMCIsInVlbXBzIjoiMC0wLTAiLCJ1bl9hcmVhIjoiMV83Ml81NTY3NF8wIn50%3D&preventPV=1&forceCurrentView=1", cookieStr, userAgent, {
-            debug: true,
-            appId: "35fa0",
-        });
+        debug: true,
+        appId: "35fa0",
+    });
 
     var a = await h5stObj.sign({
         functionId: "try_SpecFeedList",
@@ -390,12 +385,8 @@ async function main() {
     });
     console.log(params);
 
-    const agent = new https.Agent({
-        ciphers: 'TLS_AES_256_GCM_SHA384',
-    });
-
     try {
-        const {data} = await axios({
+        const {data} = await api({
             method: "POST",
             url: `https://api.m.jd.com/client.action`,
             headers: {
@@ -405,8 +396,7 @@ async function main() {
                 "User-Agent": userAgent,
                 "x-referer-page": "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html"
             },
-            data: params,
-            httpsAgent: agent
+            data: params
         });
         console.log(data);
     } catch (e) {
@@ -414,4 +404,7 @@ async function main() {
     }
 }
 
-main();
+module.exports = {
+    H5st,
+    test
+}

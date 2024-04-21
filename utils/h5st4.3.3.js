@@ -1,9 +1,6 @@
 const CryptoJS = require("crypto-js");
 const {BaseH5st} = require("./baseH5st");
-const axios = require("axios");
 const qs = require("qs");
-const https = require('https');
-
 
 class H5st extends BaseH5st {
     constructor(url, cookieStr, userAgent, config) {
@@ -262,9 +259,11 @@ class H5st extends BaseH5st {
     }
 }
 
-async function main() {
-    var cookieStr = "",
-        userAgent = "";
+async function test(cookieStr, userAgent) {
+    if (!cookieStr || !userAgent) {
+        throw new Error('测试请给ck和ua')
+    }
+
     var h5stObj = new H5st("https://shop.m.jd.com/shop/home?shopId=1000014485", cookieStr, userAgent, {
             debug: true,
             appId: "ea491",
@@ -292,12 +291,8 @@ async function main() {
     });
     console.log(params);
 
-    const agent = new https.Agent({
-        ciphers: 'TLS_AES_256_GCM_SHA384',
-    });
-
     try {
-        const {data} = await axios({
+        const {data} = await api({
             method: "POST",
             url: `https://api.m.jd.com/api`,
             headers: {
@@ -307,8 +302,7 @@ async function main() {
                 "User-Agent": userAgent,
                 "x-referer-page": "https://shop.m.jd.com/shop/home"
             },
-            data: params,
-            httpsAgent: agent
+            data: params
         });
         console.log(data);
     } catch (e) {
@@ -316,4 +310,7 @@ async function main() {
     }
 }
 
-main();
+module.exports = {
+    H5st,
+    test
+}

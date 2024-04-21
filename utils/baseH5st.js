@@ -1,6 +1,4 @@
 const CryptoJS = require("crypto-js");
-const axios = require("axios");
-const https = require("https");
 const {BaseUtils} = require("./baseUtils");
 
 class BaseH5st {
@@ -124,12 +122,7 @@ class BaseH5st {
         };
 
         try {
-
-            const agent = new https.Agent({
-                ciphers: 'TLS_AES_256_GCM_SHA384',
-            });
-
-            var {data} = await axios({
+            var {data} = await api({
                 url: "https://cactus.jd.com/request_algo",
                 method: "post",
                 data: {
@@ -148,7 +141,6 @@ class BaseH5st {
                     accept: "*/*",
                     "User-Agent": navigation.userAgent,
                 },
-                httpsAgent: agent
             });
 
             if (data && data.status === 200 && data.data && data.data.result) {
@@ -321,6 +313,5 @@ class BaseH5st {
         return info;
     }
 }
-
 
 module.exports.BaseH5st = BaseH5st
