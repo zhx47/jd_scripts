@@ -1,13 +1,10 @@
 /**
  * 京东试用， 只是一个DEMO
  */
-const {h5st} = require("./h5st4.4_lite");
-const {getBaseCookie} = require("./baseCookie");
-const CryptoJS = require("crypto-js");
-const {wrapper} = require("axios-cookiejar-support");
-const {CookieJar} = require("tough-cookie");
-const axios = require("axios");
 const qs = require('qs');
+const axios = require("axios");
+const {H5st} = require("./utils/h5st4.4.0_lite");
+const {SmashUtils} = require("./utils/smashUtils");
 
 const $ = new Env("京东试用");
 const URL = "https://api.m.jd.com/client.action";
@@ -45,11 +42,6 @@ let args_xh = {
      */
     except: (process.env.XH_TRY_EXCEPT && process.env.XH_TRY_EXCEPT.split("@")) || [], //以上环境变量新增于2022.01.30
     /*
-     * 每个Tab页要便遍历的申请页数，由于京东试用又改了，获取不到每一个Tab页的总页数了(显示null)，所以特定增加一个环境变了以控制申请页数
-     * 例如设置 JD_TRY_PRICE 为 30，假如现在正在遍历tab1，那tab1就会被遍历到30页，到31页就会跳到tab2，或下一个预设的tab页继续遍历到30页
-     * 默认为20
-     */
-    totalPages: process.env.JD_TRY_TOTALPAGES * 1 || 20, /*
      * 由于每个账号每次获取的试用产品都不一样，所以为了保证每个账号都能试用到不同的商品，之前的脚本都不支持采用统一试用组的
      * 以下环境变量是用于指定是否采用统一试用组的
      * 例如当 JD_TRY_UNIFIED 为 true时，有3个账号，第一个账号跑脚本的时候，试用组是空的
@@ -138,7 +130,7 @@ let args_xh = {
 
 !(async () => {
     await $.wait(500);
-    $.log("\n遇到问题请先看脚本内注释；解决不了可联系https://t.me/dylan_jdpro\n");
+    $.log("\n遇到问题请先看脚本内注释；解决不了可联系https://t.me/zhouya47\n");
     await requireConfig();
     if (!$.cookiesArr[0]) {
         $.msg($.name, "【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取", "https://bean.m.jd.com/", {
@@ -154,7 +146,7 @@ let args_xh = {
             $.index = i + 1;
             $.isLogin = true;
             $.nickName = "";
-            $.userAgent = $.isNode() ? process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : require("./USER_AGENTS").USER_AGENT : $.getdata("JDUA") ? $.getdata("JDUA") : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1";
+            $.userAgent = process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : require("./USER_AGENTS").USER_AGENT;
 
             await totalBean();
             console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
@@ -171,10 +163,43 @@ let args_xh = {
                 await $.notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
                 continue;
             }
+            $.ParamsSignLite = new H5st("https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html?ids=501730512%2C501676150&navh=49&stath=37&tttparams=wUQ86eyJhZGRyZXNzSWQiOjAsImRMYXQiOjAsImRMbmciOjAsImdMYXQiOiIzOS45NDQwOTMiLCJnTG5nIjoiMTE2LjQ4MjI3NiIsImdwc19hcmVhIjoiMF8wXzBfMCIsImxhdCI6MCwibG5nIjowLCJtb2RlbCI6IlJlZG1pIE5vdGUgMTJUIFBybyIsInBvc0xhdCI6IjM5Ljk0NDA5MyIsInBvc0xuZyI6IjExNi40ODIyNzYiLCJwcnN0YXRlIjoiMCIsInVlbXBzIjoiMC0wLTAiLCJ1bl9hcmVhIjoiMV83Ml81NTY3NF8wIn50%3D&preventPV=1&forceCurrentView=1",
+                $.cookie,
+                $.userAgent, {
+                    debug: false,
+                    appId: "35fa0",
+                });
+            $.smashUtils = new SmashUtils(
+                'https://prodev.m.jd.com/mall/active/3mpGVQDhvLsMvKfZZumWPQyWt83L/index.html?activityId=501742184&sku=10097544183544',
+                $.cookie,
+                $.userAgent
+            );
+            try {
+                $.smashUtils["getLocalData"]();
+                $.smashUtils["getAppOs"]();
+                $.smashUtils.getBlog();
+                $.smashUtils["getFpv"]();
+                await $.smashUtils.getInfo();
+                $.smashUtils.setjoyyaCookie("init");
+                $.smashUtils.getJrInfo();
+            } catch (e) {
+                $.smashUtils.getInterfaceData({
+                    funcName: "other",
+                    real_msg: "initial",
+                    error_msg: e && e.message
+                })
+            }
+            await $.smashUtils.initial({
+                appId: "50170_", debug: !1, preRequest: !0, onSign: function (e) {
+                    e.code, e.message, e.data
+                }, onRequestTokenRemotely: function (e) {
+                    e.code, e.message
+                }, onRequestToken: function (e) {
+                    e.code, e.message
+                }
+            })
 
-            $.h5stObj = new h5st($.cookie, $.userAgent, {
-                appId: "35fa0", debug: false
-            }, "https://h5static.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html?ids=501730512%252C501676150&navh=49&stath=37&tttparams=wUQ86eyJhZGRyZXNzSWQiOjAsImRMYXQiOjAsImRMbmciOjAsImdMYXQiOiIzOS45NDQwOTMiLCJnTG5nIjoiMTE2LjQ4MjI3NiIsImdwc19hcmVhIjoiMF8wXzBfMCIsImxhdCI6MCwibG5nIjowLCJtb2RlbCI6IlJlZG1pIE5vdGUgMTJUIFBybyIsInBvc0xhdCI6IjM5Ljk0NDA5MyIsInBvc0xuZyI6IjExNi40ODIyNzYiLCJwcnN0YXRlIjoiMCIsInVlbXBzIjoiMC0wLTAiLCJ1bl9hcmVhIjoiMV83Ml81NTY3NF8wIn50%253D&preventPV=1&forceCurrentView=1&redirectCode=501");
+
             $.totalTry = 0;
             $.totalSuccess = 0;
             $.nowTabIdIndex = 0;
@@ -219,13 +244,11 @@ let args_xh = {
                     await $.wait(15000);
                 }
                 console.log("试用申请执行完毕...");
-                // await try_MyTrials(1, 1)    //申请中的商品
                 $.giveupNum = 0;
                 $.successNum = 0;
                 $.getNum = 0;
                 $.completeNum = 0;
-                await try_MyTrials(1, 2); //申请成功的商品
-                // await try_MyTrials(1, 3)    //申请失败的商品
+                // await try_MyTrials(1, 2); //申请成功的商品
                 await showMsg();
             }
         }
@@ -278,7 +301,6 @@ function requireConfig() {
             console.log(`env: ${typeof args_xh.env}, ${args_xh.env}`);
             console.log(`try_num: ${typeof args_xh.try_num}, ${args_xh.try_num}`);
             console.log(`except: ${typeof args_xh.except}, ${args_xh.except}`);
-            console.log(`totalPages: ${typeof args_xh.totalPages}, ${args_xh.totalPages}`);
             console.log(`unified: ${typeof args_xh.unified}, ${args_xh.unified}`);
             console.log(`jdPrice: ${typeof args_xh.jdPrice}, ${args_xh.jdPrice}`);
             console.log(`tabId: ${typeof args_xh.tabId}, ${args_xh.tabId}`);
@@ -297,122 +319,139 @@ function requireConfig() {
     });
 }
 
-//获取商品列表并且过滤 By X1a0He
+//获取商品列表并且过滤
 async function try_feedsList(tabId, page) {
-    const body = JSON.stringify({
-        tabId: `${tabId + ""}`, page: page, version: 2, source: "default", client: "outer",
-    });
+    const body = {
+        functionId: "try_SpecFeedList",
+        appid: "newtry",
+        body: JSON.stringify({
+            tabId: tabId + "",
+            page: page,
+            version: 2,
+            source: "default",
+            client: "outer",
+        })
+    }
 
-    let option = await taskurl_xh("newtry", "try_SpecFeedList", body, 61);
-    await $.restApi(option, (err, resp, data) => {
-        try {
-            if (err) {
-                console.log(err);
-                if (JSON.stringify(err) === `\"Response code 403 (Forbidden)\"`) {
-                    console.log(`请求失败，第 ${$.retrynum + 1} 次重试`);
-                    $.retrynum++;
-                    if ($.retrynum === 3) {
-                        $.isForbidden = true;
-                        $.log("多次尝试失败，换个时间再试！");
-                    }
-                } else {
-                    console.log(JSON.stringify(err));
-                    console.log(`${$.name} API请求失败，请检查网路重试`);
+    const h5st = await $.ParamsSignLite.sign(body)
+
+    try {
+        const {data} = await api({
+            method: "POST",
+            url: `https://api.m.jd.com/client.action`,
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                origin: "https://prodev.m.jd.com",
+                Referer: "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html?ids=501730512%2C501676150&navh=49&stath=37&tttparams=wUQ86eyJhZGRyZXNzSWQiOjAsImRMYXQiOjAsImRMbmciOjAsImdMYXQiOiIzOS45NDQwOTMiLCJnTG5nIjoiMTE2LjQ4MjI3NiIsImdwc19hcmVhIjoiMF8wXzBfMCIsImxhdCI6MCwibG5nIjowLCJtb2RlbCI6IlJlZG1pIE5vdGUgMTJUIFBybyIsInBvc0xhdCI6IjM5Ljk0NDA5MyIsInBvc0xuZyI6IjExNi40ODIyNzYiLCJwcnN0YXRlIjoiMCIsInVlbXBzIjoiMC0wLTAiLCJ1bl9hcmVhIjoiMV83Ml81NTY3NF8wIn50%3D&preventPV=1&forceCurrentView=1",
+                "User-Agent": $.userAgent,
+                "x-referer-page": "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html"
+            },
+            data: qs.stringify({
+                ...body,
+                h5st: h5st.h5st
+            })
+        });
+
+        let tempKeyword = ``;
+        if (data.data) {
+            console.log(`第 ${size++} 次获取试用商品成功，tabId:${args_xh.tabId[$.nowTabIdIndex]} 的 第 ${page} 页`);
+            console.log(`获取到商品 ${data.data.feedList.length} 条`);
+            for (let item of data.data.feedList) {
+                if (item.applyNum === null) {
+                    args_xh.printLog ? console.log(`商品未到申请时间：${item.skuTitle}\n`) : "";
+                    continue;
                 }
-            } else {
-                let tempKeyword = ``;
-                if (data.data) {
-                    $.nowPage === args_xh.totalPages ? ($.nowPage = 1) : $.nowPage++;
-                    console.log(`第 ${size++} 次获取试用商品成功，tabId:${args_xh.tabId[$.nowTabIdIndex]} 的 第 ${page}/${args_xh.totalPages} 页`);
-                    console.log(`获取到商品 ${data.data.feedList.length} 条`);
-                    for (let item of data.data.feedList) {
-                        if (item.applyNum === null) {
-                            args_xh.printLog ? console.log(`商品未到申请时间：${item.skuTitle}\n`) : "";
-                            continue;
-                        }
-                        if (trialActivityIdList.length >= args_xh.maxLength) {
-                            console.log("商品列表长度已满.结束获取");
-                            break;
-                        }
-                        if (item.applyState === 1) {
-                            args_xh.printLog ? console.log(`商品已申请试用：${item.skuTitle}\n`) : "";
-                            continue;
-                        }
-                        if (item.applyState !== null) {
-                            args_xh.printLog ? console.log(`商品状态异常，未找到skuTitle\n`) : "";
-                            continue;
-                        }
-                        if (args_xh.passZhongCao) {
-                            $.isPush = true;
-                            if (item.tagList.length !== 0) {
-                                for (let itemTag of item.tagList) {
-                                    if (itemTag.tagType === 3) {
-                                        args_xh.printLog ? console.log("商品被过滤，该商品是种草官专属") : "";
-                                        $.isPush = false;
-                                        break;
-                                    } else if (itemTag.tagType === 5) {
-                                        args_xh.printLog ? console.log("商品被跳过，该商品是付费试用！") : "";
-                                        $.isPush = false;
-                                        break;
-                                    }
-                                }
+                if (trialActivityIdList.length >= args_xh.maxLength) {
+                    console.log("商品列表长度已满.结束获取");
+                    break;
+                }
+                if (item.applyState === 1) {
+                    args_xh.printLog ? console.log(`商品已申请试用：${item.skuTitle}\n`) : "";
+                    continue;
+                }
+                if (item.applyState !== null) {
+                    args_xh.printLog ? console.log(`商品状态异常，未找到skuTitle\n`) : "";
+                    continue;
+                }
+                if (args_xh.passZhongCao) {
+                    $.isPush = true;
+                    if (item.tagList.length !== 0) {
+                        for (let itemTag of item.tagList) {
+                            if (itemTag.tagType === 3) {
+                                args_xh.printLog ? console.log("商品被过滤，该商品是种草官专属") : "";
+                                $.isPush = false;
+                                break;
+                            } else if (itemTag.tagType === 5) {
+                                args_xh.printLog ? console.log("商品被跳过，该商品是付费试用！") : "";
+                                $.isPush = false;
+                                break;
                             }
                         }
-                        if (item.skuTitle && $.isPush) {
-                            args_xh.printLog ? console.log(`检测 tabId:${args_xh.tabId[$.nowTabIdIndex]} 的 第 ${page}/${args_xh.totalPages} 页 第 ${$.nowItem++ + 1} 个商品\n${item.skuTitle}`) : "";
-                            if (args_xh.whiteList) {
-                                if (args_xh.whiteListKeywords.some((fileter_word) => item.skuTitle.includes(fileter_word))) {
-                                    args_xh.printLog ? console.log(`商品白名单通过，将加入试用组，trialActivityId为${item.trialActivityId}\n`) : "";
-                                    trialActivityIdList.push(item.trialActivityId);
-                                    trialActivityTitleList.push(item.skuTitle);
-                                }
-                            } else {
-                                tempKeyword = ``;
-                                if (parseFloat(item.jdPrice) <= args_xh.jdPrice) {
-                                    args_xh.printLog ? console.log(`商品被过滤，商品价格 ${item.jdPrice} < ${args_xh.jdPrice} \n`) : "";
-                                } else if (parseFloat(item.supplyNum) < args_xh.minSupplyNum && item.supplyNum !== null) {
-                                    args_xh.printLog ? console.log(`商品被过滤，提供申请的份数小于预设申请的份数 \n`) : "";
-                                } else if (parseFloat(item.applyNum) > args_xh.applyNumFilter && item.applyNum !== null) {
-                                    args_xh.printLog ? console.log(`商品被过滤，已申请人数大于预设的${args_xh.applyNumFilter}人 \n`) : "";
-                                } else if (item.jdPrice === null) {
-                                    args_xh.printLog ? console.log(`商品被过滤，商品无价，不能申请 \n`) : "";
-                                } else if (parseFloat(item.trialPrice) > args_xh.trialPrice) {
-                                    args_xh.printLog ? console.log(`商品被过滤，商品试用价大于预设试用价 \n`) : "";
-                                } else if (args_xh.titleFilters.some((fileter_word) => (item.skuTitle.includes(fileter_word) ? (tempKeyword = fileter_word) : ""))) {
-                                    args_xh.printLog ? console.log(`商品被过滤，含有关键词 ${tempKeyword}\n`) : "";
-                                } else {
-                                    args_xh.printLog ? console.log(`商品通过，加入试用组，trialActivityId为${item.trialActivityId}\n`) : "";
-                                    if (trialActivityIdList.indexOf(item.trialActivityId) === -1) {
-                                        trialActivityIdList.push(item.trialActivityId);
-                                        trialActivityTitleList.push(item.skuTitle);
-                                    }
-                                }
+                    }
+                }
+                if (item.skuTitle && $.isPush) {
+                    args_xh.printLog ? console.log(`检测 tabId:${args_xh.tabId[$.nowTabIdIndex]} 的 第 ${page} 页 第 ${$.nowItem++ + 1} 个商品\n${item.skuTitle}`) : "";
+                    if (args_xh.whiteList) {
+                        if (args_xh.whiteListKeywords.some((fileter_word) => item.skuTitle.includes(fileter_word))) {
+                            args_xh.printLog ? console.log(`商品白名单通过，将加入试用组，trialActivityId为${item.trialActivityId}\n`) : "";
+                            trialActivityIdList.push(item.trialActivityId);
+                            trialActivityTitleList.push(item.skuTitle);
+                        }
+                    } else {
+                        tempKeyword = ``;
+                        if (parseFloat(item.jdPrice) <= args_xh.jdPrice) {
+                            args_xh.printLog ? console.log(`商品被过滤，商品价格 ${item.jdPrice} < ${args_xh.jdPrice} \n`) : "";
+                        } else if (parseFloat(item.supplyNum) < args_xh.minSupplyNum && item.supplyNum !== null) {
+                            args_xh.printLog ? console.log(`商品被过滤，提供申请的份数小于预设申请的份数 \n`) : "";
+                        } else if (parseFloat(item.applyNum) > args_xh.applyNumFilter && item.applyNum !== null) {
+                            args_xh.printLog ? console.log(`商品被过滤，已申请人数大于预设的${args_xh.applyNumFilter}人 \n`) : "";
+                        } else if (item.jdPrice === null) {
+                            args_xh.printLog ? console.log(`商品被过滤，商品无价，不能申请 \n`) : "";
+                        } else if (parseFloat(item.trialPrice) > args_xh.trialPrice) {
+                            args_xh.printLog ? console.log(`商品被过滤，商品试用价大于预设试用价 \n`) : "";
+                        } else if (args_xh.titleFilters.some((fileter_word) => (item.skuTitle.includes(fileter_word) ? (tempKeyword = fileter_word) : ""))) {
+                            args_xh.printLog ? console.log(`商品被过滤，含有关键词 ${tempKeyword}\n`) : "";
+                        } else {
+                            args_xh.printLog ? console.log(`商品通过，加入试用组，trialActivityId为${item.trialActivityId}\n`) : "";
+                            if (trialActivityIdList.indexOf(item.trialActivityId) === -1) {
+                                trialActivityIdList.push(item.trialActivityId);
+                                trialActivityTitleList.push(item.skuTitle);
                             }
-                        } else if ($.isPush !== false) {
-                            console.error("skuTitle解析异常");
-                            return;
                         }
                     }
-                    console.log(`当前试用组长度为：${trialActivityIdList.length}`);
-                    console.log(`下一页状态:${data.data.hasNext}`);
-                    //args_xh.printLog ? console.log(`${trialActivityIdList}`) : ''
-                    if (data.data.hasNext == false || (page >= args_xh.totalPages && $.nowTabIdIndex < args_xh.tabId.length)) {
-                        //这个是因为每一个tab都会有对应的页数，获取完如果还不够的话，就获取下一个tab
-                        $.nowTabIdIndex++;
-                        $.nowPage = 1;
-                        $.nowItem = 1;
-                    }
-                    $.retrynum = 0;
-                } else {
-                    console.log(`💩 获得试用列表失败: ${data.message}`);
+                } else if ($.isPush !== false) {
+                    console.error("skuTitle解析异常");
+                    return;
                 }
             }
-        } catch (e) {
-            console.log(`⚠️ ${arguments.callee.name.toString()} API返回结果解析出错\n${e}\n${JSON.stringify(data)}`);
-        } finally {
-            return;
+            console.log(`当前试用组长度为：${trialActivityIdList.length}`);
+            console.log(`下一页状态:${data.data.hasNext}`);
+            if (data.data.hasNext != true || $.nowTabIdIndex < args_xh.tabId.length) {
+                //这个是因为每一个tab都会有对应的页数，获取完如果还不够的话，就获取下一个tab
+                $.nowTabIdIndex++;
+                $.nowPage = 1;
+                $.nowItem = 1;
+            } else {
+                $.nowPage++;
+            }
+            $.retrynum = 0;
+        } else {
+            console.log(`💩 获得试用列表失败: ${data.message}`);
         }
-    });
+    } catch (e) {
+        if (JSON.stringify(e.message) === `\"Response code 403 (Forbidden)\"`) {
+            $.retrynum++;
+            if ($.retrynum === 4) {
+                $.isForbidden = true;
+                $.log("多次尝试失败，换个时间再试！");
+            } else {
+                console.log(`请求失败，第 ${$.retrynum} 次重试`);
+            }
+        } else {
+            console.log(e.message);
+            console.log(`${$.name} API请求失败，请检查网路重试`);
+        }
+    }
 }
 
 async function try_apply(title, activityId) {
@@ -420,50 +459,64 @@ async function try_apply(title, activityId) {
     args_xh.printLog ? console.log(`商品：${title}`) : "";
     args_xh.printLog ? console.log(`id为：${activityId}`) : "";
 
-    const body = JSON.stringify({
-        activityId: activityId * 1,
-    });
+    const body = {
+        functionId: "try_apply",
+        appid: "newtry",
+        body: JSON.stringify({
+            "activityId": activityId * 1,
+        })
+    }
 
-    let option = await taskurl_xh("newtry", "try_apply", body, 59);
-    await $.restApi(option, (err, resp, data) => {
-        try {
-            if (err) {
-                if (JSON.stringify(err) === `\"Response code 403 (Forbidden)\"`) {
-                    $.isForbidden = true;
-                    console.log("账号被京东服务器风控，不再请求该帐号");
-                } else {
-                    console.log(err);
-                    console.log(JSON.stringify(err));
-                    console.log(`${$.name} API请求失败，请检查网路重试`);
-                }
-            } else {
-                $.totalTry++;
-                data = JSON.parse(data);
-                if (data.success && data.code === "1") {
-                    // 申请成功
-                    console.log("申请提交成功");
-                    $.totalSuccess++;
-                } else if (data.code === "-106") {
-                    console.log(data.message); // 未在申请时间内！
-                } else if (data.code === "-110") {
-                    console.log(data.message); // 您的申请已成功提交，请勿重复申请…
-                } else if (data.code === "-120") {
-                    console.log(data.message); // 您还不是会员，本品只限会员申请试用，请注册会员后申请！
-                } else if (data.code === "-167") {
-                    console.log(data.message); // 抱歉，此试用需为种草官才能申请。查看下方详情了解更多。
-                } else if (data.code === "-131") {
-                    console.log(data.message); // 申请次数上限。
-                    $.isLimit = true;
-                } else if (data.code === "-113") {
-                    console.log(data.message); // 操作不要太快哦！
-                } else {
-                    console.log("申请失败", data);
-                }
-            }
-        } catch (e) {
-            console.log(`⚠️ ${arguments.callee.name.toString()} API返回结果解析出错\n${e}\n${JSON.stringify(data)}`);
+    const h5st = await $.ParamsSignLite.sign(body)
+    const joylog = await $.smashUtils.sign({
+        ...body,
+        h5st: h5st.h5st
+    }, true);
+
+    try {
+        const {data} = await api({
+            method: "POST",
+            url: `https://api.m.jd.com/client.action`,
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                origin: "https://pro.m.jd.com",
+                Referer: "https://pro.m.jd.com/mall/active/3mpGVQDhvLsMvKfZZumWPQyWt83L/index.html?activityId=501834423&sku=65263095978",
+                "User-Agent": $.userAgent,
+                "x-referer-page": "https://pro.m.jd.com/mall/active/3mpGVQDhvLsMvKfZZumWPQyWt83L/index.html"
+            },
+            data: qs.stringify(joylog)
+        });
+
+        $.totalTry++;
+        if (data.success && data.code === "1") {
+            // 申请成功
+            console.log("申请提交成功");
+            $.totalSuccess++;
+        } else if (data.code === "-106") {
+            console.log(data.message); // 未在申请时间内！
+        } else if (data.code === "-110") {
+            console.log(data.message); // 您的申请已成功提交，请勿重复申请…
+        } else if (data.code === "-120") {
+            console.log(data.message); // 您还不是会员，本品只限会员申请试用，请注册会员后申请！
+        } else if (data.code === "-167") {
+            console.log(data.message); // 抱歉，此试用需为种草官才能申请。查看下方详情了解更多。
+        } else if (data.code === "-131") {
+            console.log(data.message); // 申请次数上限。
+            $.isLimit = true;
+        } else if (data.code === "-113") {
+            console.log(data.message); // 操作不要太快哦！
+        } else {
+            console.log("申请失败", data);
         }
-    });
+    } catch (e) {
+        if (JSON.stringify(e.message) === `\"Response code 403 (Forbidden)\"`) {
+            $.isForbidden = true;
+            console.log("账号被京东服务器风控，不再请求该帐号");
+        } else {
+            console.log(e.message);
+            console.log(`${$.name} API请求失败，请检查网路重试`);
+        }
+    }
 }
 
 function try_MyTrials(page, selected) {
@@ -496,7 +549,6 @@ function try_MyTrials(page, selected) {
                 if (err) {
                     console.log(`🚫 ${arguments.callee.name.toString()} API请求失败，请检查网路\n${JSON.stringify(err)}`);
                 } else {
-                    data = JSON.parse(data);
                     if (data.success) {
                         //temp adjustment
                         if (selected === 2) {
@@ -523,47 +575,6 @@ function try_MyTrials(page, selected) {
             }
         });
     });
-}
-
-async function taskurl_xh(appid, functionId, body = JSON.stringify({}), childElementCount) {
-    var requestBody = {
-        functionId: functionId, body: body, appid: appid,
-    };
-    let h5st = geth5st(requestBody, childElementCount);
-    const joylog = CryptoJS.MD5(body, "newtryundefinedundefinedtry_applyundefined").toString().concat("*").concat(undefined); // 一个简易的，不通用的log
-
-    return {
-        method: 'post',
-        url: `${URL}`,
-        headers: {
-            Cookie: $.cookie + getBaseCookie($.userAgent, "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html"),
-            "User-Agent": $.userAgent,
-            accept: "application/json, text/plain, */*",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-Requested-With": "com.jingdong.app.mall",
-            Referer: "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html?ids=501182449%2C501199724&tttparams=XkOoK0eyJhZGRyZXNzSWQiOiIiLCJkTGF0IjowLCJkTG5nIjowLCJnTGF0IjoiMzkuOTIxNDY5IiwiZ0xuZyI6IjExNi40NDMxMDciLCJncHNfYXJlYSI6IjBfMF8wXzAiLCJsYXQiOjAsImxuZyI6MCwibW9kZWwiOiJSZWRtaSBLMjAgUHJvIiwicG9zTGF0IjoiIiwicG9zTG5nIjoiIiwicHJzdGF0ZSI6IjAiLCJ1ZW1wcyI6IjAtMC0yIn60%3D",
-            "x-referer-page": "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html",
-            "x-rp-client": "h5_1.0.0",
-            Origin: "https://prodev.m.jd.com",
-            Connection: "keep-alive",
-        },
-        data: qs.stringify({
-            functionId,
-            body,
-            appid,
-            h5st,
-            joylog,
-            area: '',
-            uuid: '0326636623568363-6366565616634613'
-        }),
-        proxy: {
-            protocol: 'http',
-            host: '192.168.200.253',
-            port: 9000,
-        }
-    };
 }
 
 async function showMsg() {
@@ -633,14 +644,6 @@ function totalBean() {
             }
         });
     });
-}
-
-function geth5st(body, childElementCount) {
-    // console.log(body);
-    $.h5stObj.childElementCount = childElementCount
-    var h5stResult = $.h5stObj.sign(body);
-    // console.log(h5stResult);
-    return h5stResult && h5stResult.h5st ? h5stResult.h5st : null;
 }
 
 function jsonParse(str) {
@@ -780,8 +783,7 @@ function Env(name, opts) {
 
             initAxios() {
                 if (!this.axios) {
-                    let jar = new CookieJar();
-                    this.axios = wrapper(axios.create({jar}));
+                    this.axios = axios.create();
                 }
             }
 
