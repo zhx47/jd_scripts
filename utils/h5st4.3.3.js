@@ -1,58 +1,13 @@
 const CryptoJS = require("crypto-js");
-const {BaseUtils} = require('./baseUtils');
 const {BaseH5st} = require("./baseH5st");
-const ADLER32 = require("adler-32");
-const jsdom = require("jsdom");
 const axios = require("axios");
 const qs = require("qs");
 const https = require('https');
 
 
 class H5st extends BaseH5st {
-    constructor(cookieStr, userAgent, config, url) {
-        super();
-
-        const {JSDOM} = jsdom;
-        let dom = new JSDOM(``, {
-            url: url,
-            userAgent,
-        });
-
-        global.window = dom.window
-        global.document = window.document
-
-        global.location = {
-            ...window.location,
-        }
-
-        global.navigation = {
-            ...window.navigation,
-        }
-
-        global.screen = {
-            availHeight: 1032,
-            availLeft: 0,
-            availTop: 0,
-            availWidth: 1920,
-            colorDepth: 24,
-            height: 1080,
-            isExtended: false,
-            onchange: null,
-            orientation: {
-                ScreenOrientation: {angle: 0, type: 'landscape-primary', onchange: null}
-            },
-            pixelDepth: 24,
-            width: 1920
-        };
-        window.screen = screen
-        window.navigation = navigation
-        global.navigator = window.navigator
-
-        global.localStorage = window.localStorage
-        global.history = window.history
-
-        new BaseUtils();
-
+    constructor(url, cookieStr, userAgent, config) {
+        super(url, cookieStr, userAgent);
 
         let ox = {
             DYNAMIC_TOKEN: 'WQ_dy_tk_s',
@@ -310,11 +265,10 @@ class H5st extends BaseH5st {
 async function main() {
     var cookieStr = "",
         userAgent = "";
-    var h5stObj = new H5st(cookieStr, userAgent, {
+    var h5stObj = new H5st("https://shop.m.jd.com/shop/home?shopId=1000014485", cookieStr, userAgent, {
             debug: true,
             appId: "ea491",
-        },
-        "https://shop.m.jd.com/shop/home?shopId=1000014485");
+        });
 
     var t = new Date().getTime()
 
@@ -326,7 +280,6 @@ async function main() {
         client: "wh5",
         t
     });
-    console.log(a);
 
     let params = qs.stringify({
         'functionId': 'whx_getShopHomeFloorInfo',
@@ -343,21 +296,24 @@ async function main() {
         ciphers: 'TLS_AES_256_GCM_SHA384',
     });
 
-    const {data, status} = await axios({
-        method: "POST",
-        url: `https://api.m.jd.com/api`,
-        headers: {
-            "content-type": "application/x-www-form-urlencoded",
-            origin: "https://shop.m.jd.com",
-            Referer: "https://shop.m.jd.com/",
-            "User-Agent": userAgent,
-            "x-referer-page": "https://shop.m.jd.com/shop/home"
-        },
-        data: params,
-        httpsAgent: agent
-    });
-    console.log(data);
-    console.log(status);
+    try {
+        const {data} = await axios({
+            method: "POST",
+            url: `https://api.m.jd.com/api`,
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                origin: "https://shop.m.jd.com",
+                Referer: "https://shop.m.jd.com/",
+                "User-Agent": userAgent,
+                "x-referer-page": "https://shop.m.jd.com/shop/home"
+            },
+            data: params,
+            httpsAgent: agent
+        });
+        console.log(data);
+    } catch (e) {
+        console.log(e.message)
+    }
 }
 
 main();

@@ -1,11 +1,14 @@
 const CryptoJS = require("crypto-js");
 const axios = require("axios");
-const ADLER32 = require("adler-32");
 const https = require("https");
+const {BaseUtils} = require("./baseUtils");
 
 class BaseH5st {
 
-    constructor() {
+    constructor(url, cookieStr, userAgent) {
+        global.baseUtils || new BaseUtils();
+        baseUtils.changeEnv(url, cookieStr, userAgent);
+
         this.ErrCodes = {
             UNSIGNABLE_PARAMS: 1, APPID_ABSENT: 2, TOKEN_EMPTY: 3, GENERATE_SIGNATURE_FAILED: 4, UNHANDLED_ERROR: -1
         };
@@ -108,7 +111,7 @@ class BaseH5st {
 
     async __requestAlgorithm() {
         this._log("__requestAlgorithm start.");
-        var r = this.getEnv(0);
+        var r = this.envCollect(0);
         r.ai = this._appId;
         r.fp = this._fingerprint;
         var n = JSON.stringify(r, null, 2);
@@ -221,7 +224,7 @@ class BaseH5st {
     }
 
     __collect() {
-        var n = this.getEnv(1);
+        var n = this.envCollect(1);
         n.fp = this._fingerprint;
         var e = JSON.stringify(n, null, 2);
         this._log(`__collect envCollect=${e}`);
@@ -257,7 +260,7 @@ class BaseH5st {
         }
     }
 
-    getEnv(e) {
+    envCollect(e) {
         let info = {
             pp: {},
             extend: {
@@ -277,6 +280,10 @@ class BaseH5st {
                 var matches = window.navigator.userAgent.match(regex);
                 return matches && matches[1] ? matches[1] : "";
             })()
+        }
+
+        if (this.v) {
+            info.v = this.v
         }
 
         if (e == 0) {

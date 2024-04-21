@@ -1,24 +1,12 @@
 const CryptoJS = require("crypto-js");
-const ADLER32 = require("adler-32");
+const {JSDOM} = require("jsdom");
 const crc32 = require('crc').crc32;
 
 
 class BaseUtils {
     constructor() {
-
-
         global.baseUtils = this
     }
-
-    // window = {
-    //     navigator: {
-    //         languages: [
-    //             "zh-CN",
-    //             "en-US"
-    //         ],
-    //         plugins: []
-    //     }
-    // }
 
     requestUrl = {
         gettoken: "https://rjsb-token-m.jd.com/gettoken",
@@ -88,6 +76,62 @@ class BaseUtils {
         }
     }
 
+    changeEnv(url, cookieStr, userAgent) {
+        let ptPin = this.extractPtPin(cookieStr);
+        if (ptPin && global.document) {
+            let localPtPin = this.extractPtPin(document.cookie);
+            if (localPtPin === ptPin) {
+                return
+            }
+        }
+
+        let dom = new JSDOM(``, {
+            url,
+            userAgent,
+        });
+
+        global.window = dom.window
+        global.document = window.document
+
+        global.location = {
+            ...window.location,
+        }
+
+        global.navigation = {
+            ...window.navigation,
+        }
+
+        global.screen = {
+            availHeight: 1032,
+            availLeft: 0,
+            availTop: 0,
+            availWidth: 1920,
+            colorDepth: 24,
+            height: 1080,
+            isExtended: false,
+            onchange: null,
+            orientation: {
+                ScreenOrientation: {angle: 0, type: 'landscape-primary', onchange: null}
+            },
+            pixelDepth: 24,
+            width: 1920
+        };
+        window.screen = screen
+        window.navigation = navigation
+        global.navigator = window.navigator
+
+        global.localStorage = window.localStorage
+        global.history = window.history
+    }
+
+    // 解析cookie字符串，提取pt_pin
+    extractPtPin(cookies) {
+        const regex = /pt_pin=([^;]+)/;
+        const match = cookies.match(regex);
+        const ptPinValue = match && match[1];
+        return ptPinValue || "";
+    }
+
     getDefaultVal(e) {
         const t = {
             undefined: "u",
@@ -112,24 +156,6 @@ class BaseUtils {
             return "";
         }
     }
-
-    // atobPolyfill() {
-    //     window.atob = window.atob || function (e) {
-    //         let u = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-    //         let c = /^(?:[A-Za-z\d+\/]{4})*?(?:[A-Za-z\d+\/]{2}(?:==)?|[A-Za-z\d+\/]{3}=?)?$/;
-    //         e = String(e).replace(/[\t\n\f\r ]+/g, "");
-    //         if (!c.test(e)) throw new TypeError("Failed to execute 'atob' on 'Window': The string to be decoded is not correctly encoded.");
-    //         e += "==".slice(2 - (e.length & 3));
-    //         let s, f, l, p = "", d = 0;
-    //
-    //         for (; d < e.length;) {
-    //             s = u.indexOf(e.charAt(d++)) << 18 | u.indexOf(e.charAt(d++)) << 12 | (f = u.indexOf(e.charAt(d++))) << 6 | (l = u.indexOf(e.charAt(d++)));
-    //             p += 64 === f ? String.fromCharCode(s >> 16 & 255) : 64 === l ? String.fromCharCode(s >> 16 & 255, s >> 8 & 255) : String.fromCharCode(s >> 16 & 255, 255 & s >> 8, s & 255);
-    //         }
-    //
-    //         return p;
-    //     };
-    // }
 
     baseConverter(e, t) {
         let c = [], s = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", l = e, f, p = "";
