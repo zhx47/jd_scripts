@@ -1,10 +1,14 @@
 const CryptoJS = require("crypto-js");
 const ADLER32 = require("adler-32");
+const {BaseH5st} = require("./baseH5st");
+const qs = require("qs");
+const https = require("https");
+const axios = require("axios");
 
-class h5st {
-    constructor(cookieStr, userAgent, config, url) {
-        this.cookieStr = cookieStr;
-        this.userAgent = userAgent;
+class H5st extends BaseH5st {
+    constructor(url, cookieStr, userAgent, config) {
+        super(url, cookieStr, userAgent);
+
         if (url) {
             try {
                 this.url = url;
@@ -21,8 +25,8 @@ class h5st {
             }
         }
 
-        this.map = new Map();
         this.childElementCount = 0;
+        this.v = "v_lite_f_4.4.0"
 
         this._storageFpKey = 'WQ_lite_vk1';
         this._defaultToken = "";
@@ -55,57 +59,8 @@ class h5st {
         this._log(`create instance with appId=${this._appId}`)
     }
 
-    _log(log) {
-        if (this._debug) {
-            console.log('[sign]', log)
-        }
-    }
-
-    __genDefaultKey(t, e, r, n) {
-        const o = this;
-        const u = `${t}${e}${r}${n}qV!+A!`;
-        const c = CryptoJS.enc.Base64.parse(this.toBase64(this.__parseToken(t, 16, 28)));
-        const f = CryptoJS.enc.Utf8.stringify(c).match(/^[1,2,3]{1}([x,+]{1}[1,2,3]{1})+/);
-        let i = "";
-        if (f) {
-            const s = f[0].split("");
-            let h = "";
-
-            this.a.default(s).call(s, (function (e) {
-                if (isNaN(e)) {
-                    let r = ["+", "x"];
-                    if (o.l.default(r).call(s, e) >= 0) {
-                        h = e
-                    }
-                } else {
-                    const n = `local_key_${e}`;
-                    if (o._defaultAlgorithm[n]) {
-                        switch (h) {
-                            case"+":
-                                i = "" + i + o.__algorithm(n, u, t);
-                                break;
-                            case"x":
-                                i = o.__algorithm(n, i, t);
-                                break;
-                            default:
-                                i = o.__algorithm(n, u, t)
-                        }
-                    }
-                }
-            }))
-        }
-        return i;
-    }
-
-    __algorithm(t, e, r) {
-        return t === 'local_key_3' ? this._defaultAlgorithm[t](e, r).toString(CryptoJS.enc.Hex) : this._defaultAlgorithm[t](e).toString(CryptoJS.enc.Hex);
-    }
-
-    __parseToken(t, e, r) {
-        if (t) {
-            return this.y.default(t).call(t, e, r);
-        }
-        return ""
+    __genDefaultKey(t, r, n, e) {
+        return super.__genDefaultKey(t, `${t}${r}${n}${e}qV!+A!`);
     }
 
     __genSignParams(t, e, r, n) {
@@ -113,7 +68,7 @@ class h5st {
     }
 
     __genSign(t, e) {
-        const i = this.v.default(e).call(e, (function (t) {
+        const i = baseUtils.getDefaultMethod(e, 'map').call(e, (function (t) {
             return t.key + ":" + t.value
         })).join("&");
         const a = CryptoJS.MD5(t + i + t).toString(CryptoJS.enc.Hex);
@@ -121,104 +76,13 @@ class h5st {
         return a
     }
 
-    y = {
-        default: function (t) {
-            const e = t.slice;
-            return t === Array.prototype || Array.prototype.isPrototypeOf(t) && e === Array.prototype.slice ? Array.prototype.slice : e
-        }
-    }
-
-    v = {
-        default: function (t) {
-            const e = t.map;
-            return t === Array.prototype || Array.prototype.isPrototypeOf(t) && e.map === Array.prototype.map ? Array.prototype.map : e
-        }
-    }
-
-    l = {
-        default: function (t) {
-            const e = t.indexOf;
-            return t === Array.prototype || Array.prototype.isPrototypeOf(t) && e.indexOf === Array.prototype.indexOf ? Array.prototype.indexOf : e
-        }
-    }
-
-    s = {
-        default: function (t) {
-            const e = t.concat;
-            return t === Array.prototype || Array.prototype.isPrototypeOf(t) && e.concat === Array.prototype.concat ? Array.prototype.concat : e
-        }
-    }
-
-    a = {
-        default: function (t) {
-            const e = t.forEach;
-            return t === Array.prototype || Array.prototype.isPrototypeOf(t) && e.forEach === Array.prototype.forEach ? Array.prototype.forEach : e
-        }
-    }
-
-    x = {
-        default: function (t) {
-            const e = t.sort;
-            return t === Array.prototype || Array.prototype.isPrototypeOf(t) && e.sort === Array.prototype.sort ? Array.prototype.sort : e
-        }
-    }
-
-    _ = {
-        default: function (t) {
-            const e = t.filter;
-            return t === Array.prototype || Array.prototype.isPrototypeOf(t) && e.filter === Array.prototype.filter ? Array.prototype.filter : e
-        }
-    }
-
-    __requestDeps() {
-        this._fingerprint = this.map.get(this._storageFpKey);
+    async __requestDeps() {
+        this._fingerprint = this.getSync(this._storageFpKey);
         if (!this._fingerprint) {
             this._fingerprint = this.generateVisitKey();
-            this.map.set(this._storageFpKey, this._fingerprint)
+            this.setSync(this._storageFpKey, this._fingerprint, {expire: 3600 * 24 * 365});
         }
         this._log('__requestDeps, fp:' + this._fingerprint);
-    }
-
-    __checkParams(t) {
-        const that = this
-        let u = null;
-        if (!this._appId) {
-            u = {
-                code: this.ErrCodes.APPID_ABSENT, message: "appId is required"
-            }
-        }
-        if (!this.isPlainObject(t)) {
-            u = {
-                code: this.ErrCodes.UNSIGNABLE_PARAMS, message: 'params is not a plain object'
-            }
-        }
-        if (this.isEmpty(t)) {
-            u = {
-                code: this.ErrCodes.UNSIGNABLE_PARAMS, message: 'params is empty'
-            }
-        }
-        if (this.containsReservedParamName(t)) {
-            u = {
-                code: this.ErrCodes.UNSIGNABLE_PARAMS, message: 'params contains reserved param name.'
-            }
-        }
-        if (u) {
-            this._onSign(u);
-            return null;
-        }
-        let o, e, r, n;
-        o = this._.default(e = this.v.default(r = this.x.default(n = Object.keys(t)).call(n)).call(r, (function (e) {
-            return {key: e, value: t[e]}
-        }))).call(e, (function (t) {
-            return that.isSafeParamValue(t.value)
-        }))
-        if (o.length === 0) {
-            this._onSign({
-                code: this.ErrCodes.UNSIGNABLE_PARAMS, message: 'params is empty after excluding "unsafe" params',
-            });
-            return null;
-        }
-        return o;
     }
 
     __makeSign(t, e) {
@@ -258,7 +122,7 @@ class h5st {
         }
 
         const f = this.__genSign(o, t);
-        const l = this.v.default(t).call(t, (function (t) {
+        const l = baseUtils.getDefaultMethod(t, 'map').call(t, (function (t) {
             return t.key
         })).join(",");
         const h = 1;
@@ -282,43 +146,20 @@ class h5st {
         return i.ciphertext.toString()
     }
 
-    sign(params) {
-        try {
-            var e = ["functionId", "appid", "client", "body", "clientVersion", "sign", "t", "jsonp"].reduce((function (e, r) {
-                var n = params[r];
-                return n && ("body" === r && (n = CryptoJS.SHA256(n).toString()), e[r] = n), e
-            }), {});
-
-            var o = this.__checkParams(e);
-            if (o == null) {
-                return e;
-            }
-            this.__requestDeps();
-            let i = this.__collect();
-            let a = this.__makeSign(o, i);
-            return Object.assign({}, e, a);
-        } catch (error) {
-            this._onSign({
-                code: this.ErrCodes.UNHANDLED_ERROR, message: 'unknown error'
-            })
-            return e;
-        }
-    }
-
     genLocalTK(t) {
         const that = this;
 
         function b(t) {
             function w(t) {
-                return that.v.default(Array.prototype).call(t, (function (t) {
+                return baseUtils.getDefaultMethod(Array.prototype, 'map').call(t, (function (t) {
                     var e;
-                    return that.y.default(e = "00" + (255 & t).toString(16)).call(e, -2)
+                    return baseUtils.getDefaultMethod(e = "00" + (255 & t).toString(16), 'slice').call(e, -2)
                 })).join("")
             }
 
             function _(t) {
                 var e = new Uint8Array(t.length);
-                return that.a.default(Array.prototype).call(e, (function (e, r, n) {
+                return baseUtils.getDefaultMethod(Array.prototype, 'forEach').call(e, (function (e, r, n) {
                     n[r] = t.charCodeAt(r)
                 })), w(e)
             }
@@ -339,15 +180,15 @@ class h5st {
 
             var n = "", o = Date.now(), u = 'HiO81-Ei89DH', v = function (t, e, r, n) {
                 var i = new Uint8Array(16);
-                that.a.default(Array.prototype).call(i, (function (e, r, n) {
+                baseUtils.getDefaultMethod(Array.prototype, 'forEach').call(i, (function (e, r, n) {
                     n[r] = t.charCodeAt(r)
                 }));
                 var u = x(e), c = new Uint8Array(2);
-                that.a.default(Array.prototype).call(c, (function (t, e, n) {
+                baseUtils.getDefaultMethod(Array.prototype, 'forEach').call(c, (function (t, e, n) {
                     n[e] = r.charCodeAt(e)
                 }));
                 var f = new Uint8Array(12);
-                that.a.default(Array.prototype).call(f, (function (t, e, r) {
+                baseUtils.getDefaultMethod(Array.prototype, 'forEach').call(f, (function (t, e, r) {
                     r[e] = n.charCodeAt(e)
                 }));
                 var s = new Uint8Array(38);
@@ -404,45 +245,6 @@ class h5st {
         return t.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
     }
 
-    toBase64(t) {
-        return (t + this.y.default("===").call("===", (t.length + 3) % 4)).replace(/-/g, "+").replace(/_/g, "/")
-    }
-
-    envCollect() {
-        const that = this
-
-        function jC(t) {
-            if (that.cookieStr) {
-                var r = new RegExp("(^| )" + t + "(?:=([^;]*))?(;|$)"), n = that.cookieStr.match(r);
-                if (!n || !n[2]) return "";
-                var e = n[2];
-                try {
-                    return /(%[0-9A-F]{2}){2,}/.test(e) ? decodeURIComponent(e) : unescape(e);
-                } catch (t) {
-                    return unescape(e);
-                }
-            }
-        }
-
-        let info = {
-            extend: {
-                bu1: "lite_0.1.5", bu2: 0, bu3: this.childElementCount, // bu3: document.head.childElementCount,
-                bu4: 0, bu5: 0, l: 0, ls: 0, wd: 0, wk: 0,
-            }, random: this.getRandomIDPro({size: 12, dictType: 'max', customDict: null}), v: "v_lite_f_4.4.0"
-        }
-
-        // return
-        let r = {}, n = jC('pwdt_id'), i = jC('pin'), u = jC('pt_pin');
-        n && (r.p1 = n)
-        i && (r.p2 = i)
-        u && (r.p3 = u)
-        info.pp = r
-
-        let e = new RegExp('Mozilla/5.0 \\((.*?)\\)'), temp = that.userAgent.match(e);
-        info.sua = temp && temp[1] ? temp[1] : ""
-        return info
-    }
-
     generateVisitKey() {
         const that = this;
 
@@ -481,7 +283,7 @@ class h5st {
                     var o;
                     if (!t) return;
                     if ("string" == typeof t) return p(t, e);
-                    var i = that.y.default(o = Object.prototype.toString.call(t)).call(o, 8, -1);
+                    var i = baseUtils.getDefaultMethod(o = Object.prototype.toString.call(t), 'slice').call(o, 8, -1);
                     "Object" === i && t.constructor && (i = t.constructor.name);
                     if ("Map" === i || "Set" === i) return n(t);
                     if ("Arguments" === i || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(i)) return p(t, e)
@@ -537,7 +339,7 @@ class h5st {
 
         function y(t, e) {
             for (var r = 0; r < e.length; r++) {
-                -1 !== that.l.default(t).call(t, e[r]) && (t = t.replace(e[r], ""))
+                -1 !== baseUtils.getDefaultMethod(t, 'indexOf').call(t, e[r]) && (t = t.replace(e[r], ""))
             }
             return t
         }
@@ -552,41 +354,64 @@ class h5st {
         var o = 10 * Math.random() | 0;
         var i = y(r, n);
         var a = ((g({size: o, num: i}) + n + g({size: 12 - o - 1, num: i})) + o).split("");
-        var u = this.y.default(a).call(a, 0, 8);
-        var l = this.y.default(a).call(a, 8);
+        var u = baseUtils.getDefaultMethod(a, 'slice').call(a, 0, 8);
+        var l = baseUtils.getDefaultMethod(a, 'slice').call(a, 8);
         var h = [];
         for (; u.length > 0;) {
             h.push((35 - parseInt(u.pop(), 36)).toString(36))
         }
-        return (h = this.s.default(h).call(h, l)).join("")
-    }
-
-    isPlainObject(t) {
-        return "[object Object]" === Object.prototype.toString.call(t)
-    }
-
-    isEmpty(t) {
-        return !!this.isPlainObject(t) && !Object.keys(t).length
-    }
-
-    containsReservedParamName(t) {
-        const PS = ["h5st", "_stk", "_ste"];
-        for (var e = Object.keys(t), r = 0; r < e.length; r++) {
-            var n = e[r];
-            if (this.l.default(PS).call(PS, n) >= 0) return !0
-        }
-        return !1
-    }
-
-    isSafeParamValue(t) {
-        let Bp = "function" == typeof Object.Symbol && "symbol" == typeof Object.f("iterator") ? function (t) {
-            return typeof t
-        } : function (t) {
-            return t && "function" == typeof Object.Symbol && t.constructor === Object.Symbol && t !== Object.Symbol.prototype ? "symbol" : typeof t
-        }
-        let e = Bp(t);
-        return "number" === e && !isNaN(t) || "string" === e || "boolean" === e
+        return (h = baseUtils.getDefaultMethod(h, 'concat').call(h, l)).join("")
     }
 }
 
-module.exports.h5st = h5st
+module.exports.H5st = H5st
+
+
+async function main() {
+    var cookieStr = "",
+        userAgent = "";
+    var h5stObj = new H5st("https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html?ids=501730512%2C501676150&navh=49&stath=37&tttparams=wUQ86eyJhZGRyZXNzSWQiOjAsImRMYXQiOjAsImRMbmciOjAsImdMYXQiOiIzOS45NDQwOTMiLCJnTG5nIjoiMTE2LjQ4MjI3NiIsImdwc19hcmVhIjoiMF8wXzBfMCIsImxhdCI6MCwibG5nIjowLCJtb2RlbCI6IlJlZG1pIE5vdGUgMTJUIFBybyIsInBvc0xhdCI6IjM5Ljk0NDA5MyIsInBvc0xuZyI6IjExNi40ODIyNzYiLCJwcnN0YXRlIjoiMCIsInVlbXBzIjoiMC0wLTAiLCJ1bl9hcmVhIjoiMV83Ml81NTY3NF8wIn50%3D&preventPV=1&forceCurrentView=1", cookieStr, userAgent, {
+            debug: true,
+            appId: "35fa0",
+        });
+
+    var a = await h5stObj.sign({
+        functionId: "try_SpecFeedList",
+        appid: "newtry",
+        body: JSON.stringify({"tabId":"212","page":1,"version":2,"source":"default","client":"outer","tryIds":["501730512","501676150"]})
+    });
+    console.log(a);
+
+    let params = qs.stringify({
+        functionId: "try_SpecFeedList",
+        appid: "newtry",
+        body: JSON.stringify({"tabId":"212","page":1,"version":2,"source":"default","client":"outer","tryIds":["501730512","501676150"]}),
+        'h5st': a.h5st
+    });
+    console.log(params);
+
+    const agent = new https.Agent({
+        ciphers: 'TLS_AES_256_GCM_SHA384',
+    });
+
+    try {
+        const {data} = await axios({
+            method: "POST",
+            url: `https://api.m.jd.com/client.action`,
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                origin: "https://prodev.m.jd.com",
+                Referer: "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html?ids=501730512%2C501676150&navh=49&stath=37&tttparams=wUQ86eyJhZGRyZXNzSWQiOjAsImRMYXQiOjAsImRMbmciOjAsImdMYXQiOiIzOS45NDQwOTMiLCJnTG5nIjoiMTE2LjQ4MjI3NiIsImdwc19hcmVhIjoiMF8wXzBfMCIsImxhdCI6MCwibG5nIjowLCJtb2RlbCI6IlJlZG1pIE5vdGUgMTJUIFBybyIsInBvc0xhdCI6IjM5Ljk0NDA5MyIsInBvc0xuZyI6IjExNi40ODIyNzYiLCJwcnN0YXRlIjoiMCIsInVlbXBzIjoiMC0wLTAiLCJ1bl9hcmVhIjoiMV83Ml81NTY3NF8wIn50%3D&preventPV=1&forceCurrentView=1",
+                "User-Agent": userAgent,
+                "x-referer-page": "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html"
+            },
+            data: params,
+            httpsAgent: agent
+        });
+        console.log(data);
+    } catch (e) {
+        console.log(e.message)
+    }
+}
+
+main();
