@@ -427,14 +427,19 @@ async function try_feedsList(tabId, page) {
             console.log(`当前试用组长度为：${trialActivityIdList.length}`);
             console.log(`下一页状态:${data.data.hasNext}`);
             if (data.data.hasNext === false) {
-                //这个是因为每一个tab都会有对应的页数，获取完如果还不够的话，就获取下一个tab
-                $.nowTabIdIndex++;
-                $.nowPage = 1;
-                $.nowItem = 1;
+                if ($.nowTabIdIndex < args_xh.tabId.length) {
+                    $.nowTabIdIndex++;
+                    $.nowPage = 1;
+                    $.nowItem = 1;
+                    $.retrynum = 0;
+                } else {
+                    // 这下是真的没了
+                    $.retrynum = 999
+                }
             } else {
                 $.nowPage++;
+                $.retrynum = 0;
             }
-            $.retrynum = 0;
         } else {
             console.log(`💩 获得试用列表失败: ${data.message}`);
         }
