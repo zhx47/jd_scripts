@@ -13,6 +13,10 @@ class BaseH5st {
 
         this._defaultAlgorithm = {};
         this._debug = false;
+
+        this.settings = {
+            debug: !1, preRequest: !1, timeout: 2,
+        };
     }
 
     _log(log) {
@@ -90,8 +94,7 @@ class BaseH5st {
     __parseAlgorithm(t, r) {
         this["_token"] = t || "";
         this.__genKey = r && new Function(`return ${r}`)() || null;
-        this._isNormal = !(!this["_token"] || !this.__genKey);
-        return this._isNormal;
+        return !(!this["_token"] || !this.__genKey);
     }
 
     __genSign(t, r) {
@@ -132,7 +135,7 @@ class BaseH5st {
                     timestamp: Date.now(),
                     platform: "web",
                     expandParams: dt.env,
-                    fv: 'h5_file_v4.3.3',
+                    fv: this.algoFv,
                 },
                 headers: {
                     "Content-Type": "application/json;charset=utf-8",
@@ -256,7 +259,7 @@ class BaseH5st {
         let info = {
             pp: {},
             extend: {
-                bu1: "lite_0.1.5",
+                bu1: this.bu1,
                 bu2: 0,
                 bu3: document.head.childElementCount,
                 bu4: 0,
