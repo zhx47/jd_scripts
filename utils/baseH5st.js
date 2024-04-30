@@ -223,7 +223,7 @@ class BaseH5st {
         n.fp = this._fingerprint;
         var e = JSON.stringify(n, null, 2);
         this._log(`__collect envCollect=${e}`);
-        var i = CryptoJS.AES.encrypt(e, CryptoJS.enc.Utf8.parse("&d74&yWoV.EYbWbZ"), {
+        var i = CryptoJS.AES.encrypt(e, CryptoJS.enc.Utf8.parse(this.collectSecret), {
             iv: CryptoJS.enc.Utf8.parse("0102030405060708"),
         });
         return i.ciphertext.toString();

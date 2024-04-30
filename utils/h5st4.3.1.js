@@ -8,6 +8,7 @@ class H5st extends BaseH5st{
 
         this.algoFv = "h5_file_v4.3.1"
         this.bu1 = "0.1.5"
+        this.collectSecret = "&d74&yWoV.EYbWbZ"
 
         let ax = {
             DYNAMIC_TOKEN: "WQ_dy_tk_s", DYNAMIC_ALGORITHM: "WQ_dy_algo_s", VK: "WQ_vk1",

@@ -8,6 +8,7 @@ class H5st extends BaseH5st {
 
         this.algoFv = 'h5_file_v4.3.3'
         this.bu1 = "lite_0.1.5"
+        this.collectSecret = "&d74&yWoV.EYbWbZ"
 
         let ox = {
             DYNAMIC_TOKEN: 'WQ_dy_tk_s',
@@ -57,7 +58,6 @@ class H5st extends BaseH5st {
         this._onRequestTokenRemotely({
             code: 200, message: "",
         });
-
     }
 
     __genDefaultKey(t, r, n, e) {
@@ -213,8 +213,6 @@ class H5st extends BaseH5st {
         var v = c + "22";
         var s = this["__genKey"](this["_token"], this["_fingerprint"], v, this["_appId"], this["algos"])["toString"]() || "";
 
-
-        var f = {};
         if (!s) {
             if (this["_token"] || this["_defaultToken"]) {
                 this._onSign({
@@ -227,7 +225,7 @@ class H5st extends BaseH5st {
                     message: "token is empty",
                 });
             }
-            return f;
+            return {};
         }
         var A = this.__genSign(s, t);
         var m = baseUtils.getDefaultMethod(t, 'map').call(t, function (t) {
