@@ -1,38 +1,34 @@
 const CryptoJS = require("crypto-js");
-const qs = require('qs');
 const {BaseH5st} = require("./baseH5st");
+const qs = require("qs");
+const customAlgorithm = require('./customAlgorithm');
 
-class H5st extends BaseH5st{
+class H5st extends BaseH5st {
     constructor(url, cookieStr, userAgent, config) {
         super(url, cookieStr, userAgent);
 
-        this.v = "h5_file_v4.3.1"
+        this.v = 'h5_file_v4.7.1'
         this.bu1 = "0.1.5"
-        this.collectSecret = "&d74&yWoV.EYbWbZ"
+        this.collectSecret = "_M6Y?dvfN40VMF[X"
 
-        let ax = {
-            DYNAMIC_TOKEN: "WQ_dy_tk_s", DYNAMIC_ALGORITHM: "WQ_dy_algo_s", VK: "WQ_vk1",
-        };
+        let ox = {
+            DYNAMIC_TOKEN: 'WQ_dy_tk_s',
+            DYNAMIC_ALGORITHM: 'WQ_dy_algo_s',
+            VK: 'WQ_vk1'
+        }
 
-        this._storagetokenKey = ax.DYNAMIC_TOKEN;
-        this._storageAlgnKey = ax.DYNAMIC_ALGORITHM;
-        this._storageFpKey = ax.VK;
+        this._storagetokenKey = ox["DYNAMIC_TOKEN"];
+        this["_storageAlgnKey"] = ox["DYNAMIC_ALGORITHM"];
+        this["_storageFpKey"] = ox.VK;
         this._token = "";
-        this._defaultToken = "";
-        this._appId = "";
+        this["_defaultToken"] = "";
+        this["_appId"] = "";
         this._defaultAlgorithm = {
             local_key_1: CryptoJS.MD5, local_key_2: CryptoJS.SHA256, local_key_3: CryptoJS.HmacSHA256,
         };
-        this.algos = {
-            MD5: CryptoJS.MD5,
-            SHA256: CryptoJS.SHA256,
-            SHA512: CryptoJS.SHA512,
-            HmacSHA256: CryptoJS.HmacSHA256,
-            HmacSHA512: CryptoJS.HmacSHA512,
-            HmacMD5: CryptoJS.HmacMD5,
-        };
-        this._version = "4.3";
-        this._fingerprint = "";
+        this.algos = customAlgorithm;
+        this["_version"] = "4.7";
+        this["_fingerprint"] = "";
         config = Object.assign({}, this.settings, config);
         this.__iniConfig(config);
     }
@@ -45,7 +41,7 @@ class H5st extends BaseH5st{
             this._storageAlgnKey = `${this._storageAlgnKey}_${this._appId}_${this._version}`;
             this._storageFpKey = `${this._storageFpKey}_${this._appId}_${this._version}`;
         }
-        this._debug = Boolean(t["debug"]);
+        this["_debug"] = Boolean(t["debug"]);
         this["_onSign"] = baseUtils.isFunction(t["onSign"]) ? t["onSign"] : baseUtils.emptyFunction;
         this["_onRequestToken"] = baseUtils.isFunction(t["onRequestToken"]) ? t["onRequestToken"] : baseUtils.emptyFunction;
         this["_onRequestTokenRemotely"] = baseUtils.isFunction(t["onRequestTokenRemotely"]) ? t["onRequestTokenRemotely"] : baseUtils.emptyFunction;
@@ -59,7 +55,16 @@ class H5st extends BaseH5st{
     }
 
     __genDefaultKey(t, r, n, e) {
-        return super.__genDefaultKey(t, `${t}${r}${n}${e}Z=<J_2`);
+        return super.__genDefaultKey(t, `${t}${r}${n}${e}hh1BNE`);
+    }
+
+    __genSign(t, r) {
+        var y = baseUtils.getDefaultMethod(r, 'map')["call"](r, function (t) {
+            return t["key"] + ":" + t.value;
+        })["join"]("&");
+        let d = this.algos.SHA256(`${t}${y}${t}`).toString(CryptoJS.enc.Hex);
+        this._log(`__genSign, paramsStr:${y}, signedStr:${d}`);
+        return d;
     }
 
     __genSignParams(t, r, n, e) {
@@ -67,18 +72,18 @@ class H5st extends BaseH5st{
     }
 
     async __requestDeps() {
-        function iC() {
-            const X = "kl9i1uct6d";
-            const U = aC(X, 3);
+        function oA() {
+            const X = "1uct6d0jhq";
+            const U = aC(X, 5);
             const et = uC();
             const J = fC(X, U);
             const Q = {size: et, num: J};
             const $ = cC(Q) + U + cC({
-                size: 12 - et, num: J,
+                size: 10 - et, num: J,
             }) + et;
             const Z = $.split("");
-            const tt = Array.prototype.slice.call(Z, 0, 10);
-            const V = Array.prototype.slice.call(Z, 10);
+            const tt = Array.prototype.slice.call(Z, 0, 15);
+            const V = Array.prototype.slice.call(Z, 15);
             var nt = [];
             for (; tt.length > 0;) nt.push((35 - parseInt(tt.pop(), 36)).toString(36));
             nt = Array.prototype.concat(nt, V);
@@ -184,10 +189,13 @@ class H5st extends BaseH5st{
         } else {
             this.removeSync(this._storageAlgnKey);
             this.removeSync(this._storagetokenKey);
-            this._fingerprint = iC();
+            // TODO fp算法好像有点问题
+            this._fingerprint = oA();
+            // this._fingerprint = 'm66zt5gy9nm69m67';
             this.setSync(this._storageFpKey, this._fingerprint, {expire: 3600 * 24 * 365});
             this._log(`__requestDeps use new fp, fp:${this._fingerprint}`);
         }
+
         if (!this.getSync(this._storagetokenKey) || !this.getSync(this._storageAlgnKey)) {
             try {
                 await this.__requestAlgorithmOnce();
@@ -195,52 +203,65 @@ class H5st extends BaseH5st{
                 this._log(`__requestDeps request token failed, error: ${t}`);
             }
         }
-        var y = CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(this.getSync(this._storagetokenKey) || ""));
-        var p = CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(this.getSync(this._storageAlgnKey) || ""));
-        var d = this.__parseAlgorithm(y, p);
-        this._log(`__requestDeps, __parseAlgorithm result:${d}, token:${y}, algo:${p}`);
-        if (!d) {
+        var s = CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(this.getSync(this._storagetokenKey) || ""));
+        var c = CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(this.getSync(this._storageAlgnKey) || ""));
+        var f = this.__parseAlgorithm(s, c);
+        this._log(`__requestDeps, __parseAlgorithm result:${f}, token:${s}, algo:${c}`);
+        if (!f) {
             throw new Error('获取TK失败')
         }
         this._log("__requestDeps end.");
     }
 
     __makeSign(t, r) {
-        var A = "";
         var C = Date.now();
-        var f = baseUtils.formatDate(C, "yyyyMMddhhmmssSSS");
-        var z = f + "22";
-        A = this.__genKey(this._token, this._fingerprint, z, this._appId, this.algos).toString() || ""
+        var c = baseUtils.formatDate(C, "yyyyMMddhhmmssSSS");
+        var v = c + "97";
+        var s = this["__genKey"](this["_token"], this["_fingerprint"], v, this["_appId"], this["algos"])["toString"]() || "";
 
-        if (!A) {
-            if (this._token || this._defaultToken) {
+        if (!s) {
+            if (this["_token"] || this["_defaultToken"]) {
                 this._onSign({
-                    code: this.ErrCodes.GENERATE_SIGNATURE_FAILED, message: "generate key failed",
+                    code: this.ErrCodes.GENERATE_SIGNATURE_FAILED,
+                    message: "generate key failed",
                 });
             } else {
                 this._onSign({
-                    code: this.ErrCodes.TOKEN_EMPTY, message: "token is empty",
+                    code: this.ErrCodes.TOKEN_EMPTY,
+                    message: "token is empty",
                 });
             }
             return {};
         }
-        var m = this.__genSign(A, t);
-        var d = baseUtils.getDefaultMethod(t, 'map')
-            .call(t, function (t) {
-                return t.key;
-            })
-            .join(",");
-        var w = 1;
-        var g = this.__genSignParams(m, C, f, r);
+        var A = this.__genSign(s, t);
+        var m = baseUtils.getDefaultMethod(t, 'map').call(t, function (t) {
+            return t["key"];
+        }).join(",");
+        var b = this["__genSignParams"](A, C, c, r);
+
         this._log("__makeSign, result:" + JSON.stringify({
-            key: A, signStr: m, _stk: d, _ste: w, h5st: g,
+            key: s,
+            signStr: A,
+            _stk: m,
+            _ste: 1,
+            h5st: b,
         }, null, 2));
+
         this._onSign({
-            code: 0, message: "success",
+            code: 0,
+            message: "success",
         });
         return {
-            _stk: d, _ste: w, h5st: g,
+            _stk: m,
+            _ste: 1,
+            h5st: b,
         };
+    }
+
+    // TEST 魔改算法
+    aes(message, key, iv) {
+        var temp = this.algos.AES.encrypt(message, CryptoJS.enc.Utf8.parse(key), {iv: CryptoJS.enc.Utf8.parse(iv)})
+        return this.algos.Base64.encode(temp.ciphertext);
     }
 }
 
@@ -249,43 +270,39 @@ async function test(cookieStr, userAgent) {
         throw new Error('测试请给ck和ua')
     }
 
-    var h5stObj = new H5st("https://shop.m.jd.com/shop/home?shopId=1000014485", cookieStr, userAgent, {
+    var h5stObj = new H5st("https://plus.m.jd.com/rights/windControl", cookieStr, userAgent, {
         debug: true,
-        appId: "ea491",
+        appId: "b63ff",
     });
 
-    var t = new Date().getTime()
-
     var a = await h5stObj.sign({
-        functionId: "whx_getShopHomeFloorInfo",
-        appid: "shop_m_jd_com",
-        body: JSON.stringify({shopId: "1000014485", source: "m-shop"}),
-        clientVersion: "12.0.0",
-        client: "wh5",
-        t
+        appid: "plus_business",
+        loginType: "2",
+        loginWQBiz: '',
+        functionId: "windControl_queryScore_v1",
+        body: JSON.stringify({}),
     });
 
     let params = qs.stringify({
-        'functionId': 'whx_getShopHomeFloorInfo',
-        'body': JSON.stringify({shopId: "1000014485", source: "m-shop"}),
-        'appid': 'shop_m_jd_com',
-        'clientVersion': '12.0.0',
-        'client': 'wh5',
+        appid: "plus_business",
+        loginType: "2",
+        loginWQBiz: '',
+        functionId: "windControl_queryScore_v1",
+        body: JSON.stringify({}),
         'h5st': a.h5st,
-        t
     });
     console.log(params);
 
     try {
         const {data} = await api({
             method: "POST",
-            url: `https://api.m.jd.com/api`,
+            url: `https://api.m.jd.com/api?functionId=windControl_queryScore_v1`,
             headers: {
                 "content-type": "application/x-www-form-urlencoded",
-                origin: "https://shop.m.jd.com",
-                Referer: "https://shop.m.jd.com/",
+                origin: "https://plus.m.jd.com",
+                Referer: "https://plus.m.jd.com/rights/windControl",
                 "User-Agent": userAgent,
-                "x-referer-page": "https://shop.m.jd.com/shop/home"
+                "x-referer-page": "https://plus.m.jd.com/rights/windControl"
             },
             data: params
         });

@@ -1,5 +1,6 @@
 const CryptoJS = require("crypto-js");
 const {BaseUtils} = require("./baseUtils");
+const os = require('os');
 
 class BaseH5st {
 
@@ -117,9 +118,7 @@ class BaseH5st {
         r.fp = this._fingerprint;
         var n = JSON.stringify(r, null, 2);
         this._log(`__requestAlgorithm envCollect=${n}`);
-        var e = CryptoJS.AES.encrypt(n, CryptoJS.enc.Utf8.parse('wm0!@w-s#ll1flo('), {
-            iv: CryptoJS.enc.Utf8.parse("0102030405060708"),
-        }).ciphertext.toString();
+        var e = this.aes(n , 'wm0!@w-s#ll1flo(', "0102030405060708");
         var dt = {
             fingerprint: this._fingerprint, appId: this._appId, version: this._version, env: e, debug: this._debug,
         };
@@ -135,7 +134,7 @@ class BaseH5st {
                     timestamp: Date.now(),
                     platform: "web",
                     expandParams: dt.env,
-                    fv: this.algoFv,
+                    fv: this.v,
                 },
                 headers: {
                     "Content-Type": "application/json;charset=utf-8",
@@ -223,10 +222,7 @@ class BaseH5st {
         n.fp = this._fingerprint;
         var e = JSON.stringify(n, null, 2);
         this._log(`__collect envCollect=${e}`);
-        var i = CryptoJS.AES.encrypt(e, CryptoJS.enc.Utf8.parse(this.collectSecret), {
-            iv: CryptoJS.enc.Utf8.parse("0102030405060708"),
-        });
-        return i.ciphertext.toString();
+        return this.aes(e, this.collectSecret, "0102030405060708");
     }
 
     async sign(params) {
@@ -257,7 +253,16 @@ class BaseH5st {
 
     envCollect(e) {
         let info = {
-            pp: {},
+            pp: (() => {
+                let ptPin = baseUtils.extractPtPin(document.cookie);
+                if (ptPin) {
+                    return {
+                        "p1": ptPin,
+                        "p2": ptPin
+                    }
+                }
+                return {}
+            })(),
             extend: {
                 bu1: this.bu1,
                 bu2: 0,
@@ -300,6 +305,12 @@ class BaseH5st {
                 "oh": window.outerHeight,
                 "url": location.href,
                 "og": location.origin,
+                // "pf": os.platform(),
+                // "bu2": "    at https://storage.360buyimg.com/webcontainer/js_security_v3_0.1.5.js:3833:21",
+                // "canvas": "07d433e77178ffb3c4358a1a92f3233f",
+                // "webglFp": "d714752d3e7330bcd7e2b332e7cbcb56",
+                "ccn": navigator.hardwareConcurrency,
+                "ai": this._appId,
                 "pr": 1,
                 "re": document.referrer,
                 "referer": (() => {
@@ -314,6 +325,12 @@ class BaseH5st {
         }
 
         return info;
+    }
+
+    aes(message, key, iv) {
+        return CryptoJS.AES.encrypt(message, CryptoJS.enc.Utf8.parse(key), {
+            iv: CryptoJS.enc.Utf8.parse(iv),
+        }).ciphertext.toString();
     }
 }
 

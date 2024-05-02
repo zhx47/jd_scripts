@@ -6,7 +6,7 @@ class H5st extends BaseH5st {
     constructor(url, cookieStr, userAgent, config) {
         super(url, cookieStr, userAgent);
 
-        this.algoFv = 'h5_file_v4.3.3'
+        this.v = 'h5_file_v4.3.3'
         this.bu1 = "lite_0.1.5"
         this.collectSecret = "&d74&yWoV.EYbWbZ"
 
