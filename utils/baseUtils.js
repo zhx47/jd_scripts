@@ -152,8 +152,6 @@ class BaseUtils {
                     global.document.cookie = cookieString.concat(";domain=.jd.com;path=/;expires=2099-04-16T07:09:14.000Z");
                 }
             });
-
-            setBaseCookie();
         }
     }
 
