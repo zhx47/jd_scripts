@@ -643,7 +643,7 @@ async function try_feedsList(tabId, page) {
 async function h5stSign(body, h5st) {
     const options = {
         method: 'POST',
-        url: 'https://jd.zhx47.xyz/h5st',
+        url: 'http://43.142.176.171:49991/h5st',
         headers: {'content-type': 'application/json'},
         data: {
             version: '4.7.3',
