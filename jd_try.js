@@ -297,7 +297,7 @@ async function try_apply(title, activityId) {
         body: {
             "activityId": Number(activityId),
         }
-    }, '20240616220153007;z5mm6z6ny9tgiz62;35fa0;tk03wbfcb1c2841lMisyeDJkVDljOEydj-ckiCHjIYSJ1W7xoMh0tq-jHSpwPgeelBG4C-99GSgmBbeb960pVPkbRRDb;b9425397f84d9562eb929109a424b25050f5d16849dd8187530792a36f092a5e;4.7;1718546513007;UOm5YmIikru95F6Y2j_aOPloesE0LYNBvUyh1hyaUIEa2WGNlLIeoVRcsMZcqWgWTFnOjkwc0Wfsw34nc-n9LANGlLShDUmeWeNTVNWwHWjEND1qe6qHqLYy0XHvOCOii9WbK167wpxvZ7sTBf76L627d2I2lmcmSx5t-6Pt51XG-yYCin67tQis5pE7qPpNgw0omdQtBapqp0mhA4VKFTIPQeLwuj4m4hNfXrS27fXA45dct9R-umfCHpCwN3M6IJtsi82_J7zHO0GM4sO5aSrYqaojrElDcxdbe_mKEGU7xKTMSEQR3EgqiB3JzxggCShAb1gPplWROuBzocQkrL3rpnz3FODrayk0QdOvSsXuaVHTn1DhnMleaN-6lDzlBLKzhuS0aea40k6Z2F1zEONM88GH6ptzhVQpiVLWRBbxUUGgw5S-Sid8dk9mJ3j46ekXRsHabaG8rl7KlrhCth7O')
+    }, '20240724231727551;5mztiyg695z5tnm6;35fa0;tk03w20f41f0918naszDbfskhrgUzcfDumKXku5INupjsrOmCl3KKFmd6mRrkl8crZs_xiqcLE7QnvTEvit6NtsqtRZb;1bb3c8d4b832a5b112ba2a92a9255c07;4.7;1721834247551;Vy-3NMTDOXRhMCodDcpucpzC7v3nrymvZYGhifqZ5A68pfq8DdjxOFvMsFXTNo0rVHtBuECR-veFVV_RChUxCKE7X9bTj9LpiWUgE57PD0X8CPNuEBBlFUGWWGy5--qJvv9lTq85C1lvRvWcw9XUX3licufxeSRk5GVPL9mqPnFvjZb4UZjR5tFXDRNCs0WAj2iA87Ea_9ks_jbKSnX0ioFoQCfCG_rIEUwGIWRUvMLDywz7Q3wco5Y8UmZGDr11fINBkm4VCIfjX6fgcvlxUnWj1XYEXYXNIcACPjiR5idZTTqzs3JbX3LKU0RZQTxvXGwa2PTGteTFFFOs0V2_LuV9ohPmvZTTozg15eKRlFCg20YzbnU3JFKG76ppYw3fL1GcbHjUTPU9tuyxbqMBwd0u81MI1sPHONuFPWpxh1baggE7nDk8PeheJO0dl8zjLad9Prk3hGJ0DQIeqffFGvzEemLTD52YgeDqWQHLXbk3;38a6e59a66671d58fdef05a21e707505')
 
     setBaseCookie();
     const joylog = await $.smashUtils.sign({
@@ -311,7 +311,7 @@ async function try_apply(title, activityId) {
             headers: {
                 "content-type": "application/x-www-form-urlencoded",
                 origin: "https://pro.m.jd.com",
-                Referer: "https://pro.m.jd.com/mall/active/3mpGVQDhvLsMvKfZZumWPQyWt83L/index.html?activityId=501834423&sku=65263095978",
+                Referer: "https://pro.m.jd.com/mall/active/3mpGVQDhvLsMvKfZZumWPQyWt83L/index.html",
                 "User-Agent": $.userAgent,
                 "x-referer-page": "https://pro.m.jd.com/mall/active/3mpGVQDhvLsMvKfZZumWPQyWt83L/index.html"
             },
@@ -517,7 +517,7 @@ async function try_feedsList(tabId, page) {
                 client: 'outer',
             },
         },
-        '20240616184606839;z55tttgm69iy5gt3;35fa0;tk03w73961a5c41lMngyKzN4M3NZ9v6YiMHcUZzf-P--kImKPJxWOBADZAdB124IKB0-tMni0SNFkS-rY6y9NCO0kyT7;686da69d2b902071260b372ec783208bd23e2891bbe8d092fa88322f9d4af96c;4.7;1718534766839;UOGVDoANEFUxNUCVdiY9pn3sfPETGURG3lMUAqYwv2f3puLbYE75Mz4VKBAHMO4-qgP543iYlyjcq4SLHWq3kC4dKsNKK2LuLn_wCRQ-NRsgMdHsimMATwP_Kst5YN3fzVHakZmNBTqAAyt8S-19if5CXSlcYwOsVzmu7vGrSB3kHSfHw3e3Yl05nVUm_4l_VY2omdQtBapqp0mhA4VKFTIPQeLwuj4m4hNfXrS27fXA45dct9R-umfCHpCwN3M6IJtsi82_J7zHO0GM4sO5aSrYqaojrElDcxdbe_mKEGU7xKTMSEQR3EgqiB3JzxggCShAb1gPplWROuBzocQkrL3rpnz3FODrayk0QdOvSsXuaVHTn1DhnMleaN-6lDzlBLKzhuS0aea40k6Z2F1zEONM88GH6ptzhVQpiVLWRBbxUUGgw5S-Sid8dk9mJ3j46ekXRsHabaG8rl7KlrhCth7O'
+        '20240724231542475;tiz96gyymmmynn59;35fa0;tk03wa99e1c0241lMXgzeDF3dW9zObZchsHd7MW70GHq6aFjONZFrugCp0TwgLsETgOWQ0oLtcSNy6lYXgXLt6X7VD7I;8ee3beb4a5b9bb02d0ad5ed19ba1be6f;4.7;1721834142475;VGInRgLX8wqehuFHHURclRFJu_naXR7GtKnR3UvOAF9QviA7QNK29c3Jz6uuL5c40uCK9E4hr08VtpRpmeVEhVtJdhi7WlAhOQ_oNvJkhthVs2TZEo3LbRFdHrdaH_L6udnuK8henv76kw6V43qT423RvvY41nz504Iuai8q9uFWycGaK-7mUFBxzn37TjWOg2iA87Ea_9ks_jbKSnX0ioFoQCfCG_rIEUwGIWRUvMLDywz7Q3wco5Y8UmZGDr11fINBkm4VCIfjX6fgcvlxUnWj1XYEXYXNIcACPjiR5idZTTqzs3JbX3LKU0RZQTxvXGwa2PTGteTFFFOs0V2_LuV9ohPmvZTTozg15eKRlFCg20YzbnU3JFKG76ppYw3fL1GcbHjUTPU9tuyxbqMBwd0u81MI1sPHONuFPWpxh1baggE7nDk8PeheJO0dl8zjLad9Prk3hGJ0DQIeqffFGvzEemLTD52YgeDqWQHLXbk3;00d4b347d0191476aa87a3f0ae6f8104'
     )
 
     try {
@@ -529,7 +529,8 @@ async function try_feedsList(tabId, page) {
                 origin: "https://prodev.m.jd.com",
                 Referer: "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html",
                 "User-Agent": $.userAgent,
-                "x-referer-page": "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html"
+                "x-referer-page": "https://prodev.m.jd.com/mall/active/3C751WNneAUaZ8Lw8xYN7cbSE8gm/index.html",
+                'x-rp-client': 'h5_1.0.0'
             },
             data: sign.qs
         });
@@ -647,7 +648,7 @@ async function h5stSign(body, h5st) {
         url: `${args_xh.h5st_server}/h5st`,
         headers: {'content-type': 'application/json'},
         data: {
-            version: '4.7.3',
+            version: '4.7.4',
             pin: $.UserName,
             ua: $.userAgent,
             body,
