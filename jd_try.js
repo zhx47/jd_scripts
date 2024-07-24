@@ -27,6 +27,7 @@ $.cookiesArr = [];
 $.innerKeyWords = ["幼儿园", "教程", "英语", "辅导", "培训", "孩子", "小学", "成人用品", "套套", "情趣", "自慰", "阳具", "飞机杯", "男士用品", "女士用品", "内衣", "高潮", "避孕", "乳腺", "肛塞", "肛门", "宝宝", "芭比", "娃娃", "男用", "女用", "神油", "足力健", "老年", "老人", "宠物", "饲料", "丝袜", "黑丝", "磨脚", "脚皮", "除臭", "性感", "内裤", "跳蛋", "安全套", "龟头", "阴道", "阴部", "手机卡", "电话卡", "流量卡", "习题", "试卷",];
 //下面很重要，遇到问题请把下面注释看一遍再来问
 let args_xh = {
+    h5st_server: process.env.H5ST_SERVER || 'https://jd1.zhx47.xyz',
     /*
      * 控制一次最多跑几个号，默认10个
      */
@@ -643,7 +644,7 @@ async function try_feedsList(tabId, page) {
 async function h5stSign(body, h5st) {
     const options = {
         method: 'POST',
-        url: 'http://43.142.176.171:49991/h5st',
+        url: `${args_xh.h5st_server}/h5st`,
         headers: {'content-type': 'application/json'},
         data: {
             version: '4.7.3',
