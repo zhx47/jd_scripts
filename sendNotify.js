@@ -152,83 +152,83 @@ let PUSHME_KEY = '';
 
 //==========================云端环境变量的判断与接收=========================
 if (process.env.GOTIFY_URL) {
-    GOTIFY_URL = process.env.GOTIFY_URL;
+  GOTIFY_URL = process.env.GOTIFY_URL;
 }
 if (process.env.GOTIFY_TOKEN) {
-    GOTIFY_TOKEN = process.env.GOTIFY_TOKEN;
+  GOTIFY_TOKEN = process.env.GOTIFY_TOKEN;
 }
 if (process.env.GOTIFY_PRIORITY) {
-    GOTIFY_PRIORITY = process.env.GOTIFY_PRIORITY;
+  GOTIFY_PRIORITY = process.env.GOTIFY_PRIORITY;
 }
 
 if (process.env.GOBOT_URL) {
-    GOBOT_URL = process.env.GOBOT_URL;
+  GOBOT_URL = process.env.GOBOT_URL;
 }
 if (process.env.GOBOT_TOKEN) {
-    GOBOT_TOKEN = process.env.GOBOT_TOKEN;
+  GOBOT_TOKEN = process.env.GOBOT_TOKEN;
 }
 if (process.env.GOBOT_QQ) {
-    GOBOT_QQ = process.env.GOBOT_QQ;
+  GOBOT_QQ = process.env.GOBOT_QQ;
 }
 
 if (process.env.PUSH_KEY) {
-    SCKEY = process.env.PUSH_KEY;
+  SCKEY = process.env.PUSH_KEY;
 }
 
 if (process.env.DEER_KEY) {
-    PUSHDEER_KEY = process.env.DEER_KEY;
-    PUSHDEER_URL = process.env.DEER_URL;
+  PUSHDEER_KEY = process.env.DEER_KEY;
+  PUSHDEER_URL = process.env.DEER_URL;
 }
 
 if (process.env.CHAT_URL) {
-    CHAT_URL = process.env.CHAT_URL;
+  CHAT_URL = process.env.CHAT_URL;
 }
 
 if (process.env.CHAT_TOKEN) {
-    CHAT_TOKEN = process.env.CHAT_TOKEN;
+  CHAT_TOKEN = process.env.CHAT_TOKEN;
 }
 
 if (process.env.QQ_SKEY) {
-    QQ_SKEY = process.env.QQ_SKEY;
+  QQ_SKEY = process.env.QQ_SKEY;
 }
 
 if (process.env.QQ_MODE) {
-    QQ_MODE = process.env.QQ_MODE;
+  QQ_MODE = process.env.QQ_MODE;
 }
 
 if (process.env.BARK_PUSH) {
-    if (process.env.BARK_PUSH.indexOf('https') > -1 || process.env.BARK_PUSH.indexOf('http') > -1) {
-        //兼容BARK自建用户
-        BARK_PUSH = process.env.BARK_PUSH;
-    } else {
-        BARK_PUSH = `https://api.day.app/${process.env.BARK_PUSH}`;
-    }
-    if (process.env.BARK_ICON) {
-        BARK_ICON = process.env.BARK_ICON;
-    }
-    if (process.env.BARK_SOUND) {
-        BARK_SOUND = process.env.BARK_SOUND;
-    }
-    if (process.env.BARK_GROUP) {
-        BARK_GROUP = process.env.BARK_GROUP;
-    }
-    if (process.env.BARK_LEVEL) {
-        BARK_LEVEL = process.env.BARK_LEVEL;
-    }
-    if (process.env.BARK_URL) {
-        BARK_URL = process.env.BARK_URL;
-    }
+  if (process.env.BARK_PUSH.indexOf('https') > -1 || process.env.BARK_PUSH.indexOf('http') > -1) {
+    //兼容BARK自建用户
+    BARK_PUSH = process.env.BARK_PUSH;
+  } else {
+    BARK_PUSH = `https://api.day.app/${process.env.BARK_PUSH}`;
+  }
+  if (process.env.BARK_ICON) {
+    BARK_ICON = process.env.BARK_ICON;
+  }
+  if (process.env.BARK_SOUND) {
+    BARK_SOUND = process.env.BARK_SOUND;
+  }
+  if (process.env.BARK_GROUP) {
+    BARK_GROUP = process.env.BARK_GROUP;
+  }
+  if (process.env.BARK_LEVEL) {
+    BARK_LEVEL = process.env.BARK_LEVEL;
+  }
+  if (process.env.BARK_URL) {
+    BARK_URL = process.env.BARK_URL;
+  }
 } else {
-    if (BARK_PUSH && BARK_PUSH.indexOf('https') === -1 && BARK_PUSH.indexOf('http') === -1) {
-        //兼容BARK本地用户只填写设备码的情况
-        BARK_PUSH = `https://api.day.app/${BARK_PUSH}`;
-    }
+  if (BARK_PUSH && BARK_PUSH.indexOf('https') === -1 && BARK_PUSH.indexOf('http') === -1) {
+    //兼容BARK本地用户只填写设备码的情况
+    BARK_PUSH = `https://api.day.app/${BARK_PUSH}`;
+  }
 }
 if (process.env.TG_BOT_TOKEN) {
-    TG_BOT_TOKEN = process.env.TG_BOT_TOKEN;
+  TG_BOT_TOKEN = process.env.TG_BOT_TOKEN;
 }
 if (process.env.TG_USER_ID) {
-    TG_USER_ID = process.env.TG_USER_ID;
+  TG_USER_ID = process.env.TG_USER_ID;
 }
 if (process.env.TG_PROXY_AUTH) TG_PROXY_AUTH = process.env.TG_PROXY_AUTH;
 if (process.env.TG_PROXY_HOST) TG_PROXY_HOST = process.env.TG_PROXY_HOST;
@@ -236,68 +236,68 @@ if (process.env.TG_PROXY_PORT) TG_PROXY_PORT = process.env.TG_PROXY_PORT;
 if (process.env.TG_API_HOST) TG_API_HOST = process.env.TG_API_HOST;
 
 if (process.env.DD_BOT_TOKEN) {
-    DD_BOT_TOKEN = process.env.DD_BOT_TOKEN;
-    if (process.env.DD_BOT_SECRET) {
-        DD_BOT_SECRET = process.env.DD_BOT_SECRET;
-    }
+  DD_BOT_TOKEN = process.env.DD_BOT_TOKEN;
+  if (process.env.DD_BOT_SECRET) {
+    DD_BOT_SECRET = process.env.DD_BOT_SECRET;
+  }
 }
 
 if (process.env.QYWX_ORIGIN) {
-    QYWX_ORIGIN = process.env.QYWX_ORIGIN;
+  QYWX_ORIGIN = process.env.QYWX_ORIGIN;
 } else {
-    QYWX_ORIGIN = 'https://qyapi.weixin.qq.com';
+  QYWX_ORIGIN = 'https://qyapi.weixin.qq.com';
 }
 
 if (process.env.QYWX_KEY) {
-    QYWX_KEY = process.env.QYWX_KEY;
+  QYWX_KEY = process.env.QYWX_KEY;
 }
 
 if (process.env.QYWX_AM) {
-    QYWX_AM = process.env.QYWX_AM;
+  QYWX_AM = process.env.QYWX_AM;
 }
 
 if (process.env.IGOT_PUSH_KEY) {
-    IGOT_PUSH_KEY = process.env.IGOT_PUSH_KEY;
+  IGOT_PUSH_KEY = process.env.IGOT_PUSH_KEY;
 }
 
 if (process.env.PUSH_PLUS_TOKEN) {
-    PUSH_PLUS_TOKEN = process.env.PUSH_PLUS_TOKEN;
+  PUSH_PLUS_TOKEN = process.env.PUSH_PLUS_TOKEN;
 }
 if (process.env.PUSH_PLUS_USER) {
-    PUSH_PLUS_USER = process.env.PUSH_PLUS_USER;
+  PUSH_PLUS_USER = process.env.PUSH_PLUS_USER;
 }
 
 if (process.env.AIBOTK_KEY) {
-    AIBOTK_KEY = process.env.AIBOTK_KEY;
+  AIBOTK_KEY = process.env.AIBOTK_KEY;
 }
 if (process.env.AIBOTK_TYPE) {
-    AIBOTK_TYPE = process.env.AIBOTK_TYPE;
+  AIBOTK_TYPE = process.env.AIBOTK_TYPE;
 }
 if (process.env.AIBOTK_NAME) {
-    AIBOTK_NAME = process.env.AIBOTK_NAME;
+  AIBOTK_NAME = process.env.AIBOTK_NAME;
 }
 
 if (process.env.FSKEY) {
-    FSKEY = process.env.FSKEY;
+  FSKEY = process.env.FSKEY;
 }
 
 if (process.env.SMTP_SERVER) {
-    SMTP_SERVER = process.env.SMTP_SERVER;
+  SMTP_SERVER = process.env.SMTP_SERVER;
 }
 if (process.env.SMTP_SSL) {
-    SMTP_SSL = process.env.SMTP_SSL;
+  SMTP_SSL = process.env.SMTP_SSL;
 }
 if (process.env.SMTP_EMAIL) {
-    SMTP_EMAIL = process.env.SMTP_EMAIL;
+  SMTP_EMAIL = process.env.SMTP_EMAIL;
 }
 if (process.env.SMTP_PASSWORD) {
-    SMTP_PASSWORD = process.env.SMTP_PASSWORD;
+  SMTP_PASSWORD = process.env.SMTP_PASSWORD;
 }
 if (process.env.SMTP_NAME) {
-    SMTP_NAME = process.env.SMTP_NAME;
+  SMTP_NAME = process.env.SMTP_NAME;
 }
 if (process.env.PUSHME_KEY) {
-    PUSHME_KEY = process.env.PUSHME_KEY;
+  PUSHME_KEY = process.env.PUSHME_KEY;
 }
 
 //==========================云端环境变量的判断与接收=========================
@@ -310,770 +310,826 @@ if (process.env.PUSHME_KEY) {
  * @param author 作者仓库等信息  例：`本通知 By：https://github.com/whyour/qinglong`
  * @returns {Promise<unknown>}
  */
-async function sendNotify(text, desp, params = {}, author = '\n\n本通知 By：https://github.com/whyour/qinglong',) {
-    //提供6种通知
-    desp += author; //增加作者信息，防止被贩卖等
+async function sendNotify(text, desp, params = {}, author = '\n\n本通知 By：https://github.com/whyour/qinglong') {
+  //提供6种通知
+  desp += author; //增加作者信息，防止被贩卖等
 
-    // 根据标题跳过一些消息推送，环境变量：SKIP_PUSH_TITLE 用回车分隔
-    let skipTitle = process.env.SKIP_PUSH_TITLE;
-    if (skipTitle) {
-        if (skipTitle.split('\n').includes(text)) {
-            console.info(text + '在SKIP_PUSH_TITLE环境变量内，跳过推送！');
-            return;
-        }
+  // 根据标题跳过一些消息推送，环境变量：SKIP_PUSH_TITLE 用回车分隔
+  let skipTitle = process.env.SKIP_PUSH_TITLE;
+  if (skipTitle) {
+    if (skipTitle.split('\n').includes(text)) {
+      console.info(text + '在SKIP_PUSH_TITLE环境变量内，跳过推送！');
+      return;
     }
+  }
 
-    await Promise.all([serverNotify(text, desp), //微信server酱
-        pushPlusNotify(text, desp), //pushplus(推送加)
-    ]);
-    //由于上述两种微信通知需点击进去才能查看到详情，故text(标题内容)携带了账号序号以及昵称信息，方便不点击也可知道是哪个京东哪个活动
-    text = text.match(/.*?(?=\s?-)/g) ? text.match(/.*?(?=\s?-)/g)[0] : text;
-    await Promise.all([BarkNotify(text, desp, params), //iOS Bark APP
-        tgBotNotify(text, desp), //telegram 机器人
-        ddBotNotify(text, desp), //钉钉机器人
-        qywxBotNotify(text, desp), //企业微信机器人
-        qywxamNotify(text, desp), //企业微信应用消息推送
-        iGotNotify(text, desp, params), //iGot
-        gobotNotify(text, desp), //go-cqhttp
-        gotifyNotify(text, desp), //gotify
-        ChatNotify(text, desp), //synolog chat
-        PushDeerNotify(text, desp), //PushDeer
-        aibotkNotify(text, desp), //智能微秘书
-        fsBotNotify(text, desp), //飞书机器人
-        smtpNotify(text, desp), //SMTP 邮件
-        PushMeNotify(text, desp, params), //PushMe
-    ]);
+  await Promise.all([
+    serverNotify(text, desp), //微信server酱
+    pushPlusNotify(text, desp), //pushplus(推送加)
+  ]);
+  //由于上述两种微信通知需点击进去才能查看到详情，故text(标题内容)携带了账号序号以及昵称信息，方便不点击也可知道是哪个京东哪个活动
+  text = text.match(/.*?(?=\s?-)/g) ? text.match(/.*?(?=\s?-)/g)[0] : text;
+  await Promise.all([
+    BarkNotify(text, desp, params), //iOS Bark APP
+    tgBotNotify(text, desp), //telegram 机器人
+    ddBotNotify(text, desp), //钉钉机器人
+    qywxBotNotify(text, desp), //企业微信机器人
+    qywxamNotify(text, desp), //企业微信应用消息推送
+    iGotNotify(text, desp, params), //iGot
+    gobotNotify(text, desp), //go-cqhttp
+    gotifyNotify(text, desp), //gotify
+    ChatNotify(text, desp), //synolog chat
+    PushDeerNotify(text, desp), //PushDeer
+    aibotkNotify(text, desp), //智能微秘书
+    fsBotNotify(text, desp), //飞书机器人
+    smtpNotify(text, desp), //SMTP 邮件
+    PushMeNotify(text, desp, params), //PushMe
+  ]);
 }
 
 function gotifyNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (GOTIFY_URL && GOTIFY_TOKEN) {
-            const options = {
-                url: `${GOTIFY_URL}/message?token=${GOTIFY_TOKEN}`,
-                body: `title=${encodeURIComponent(text)}&message=${encodeURIComponent(desp,)}&priority=${GOTIFY_PRIORITY}`,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('gotify发送通知调用API失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.id) {
-                            console.log('gotify发送通知消息成功🎉\n');
-                        } else {
-                            console.log(`${data.message}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve();
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    if (GOTIFY_URL && GOTIFY_TOKEN) {
+      const options = {
+        url: `${GOTIFY_URL}/message?token=${GOTIFY_TOKEN}`,
+        body: `title=${encodeURIComponent(text)}&message=${encodeURIComponent(desp)}&priority=${GOTIFY_PRIORITY}`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('gotify发送通知调用API失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.id) {
+              console.log('gotify发送通知消息成功🎉\n');
+            } else {
+              console.log(`${data.message}\n`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve();
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function gobotNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (GOBOT_URL) {
-            const options = {
-                url: `${GOBOT_URL}?access_token=${GOBOT_TOKEN}&${GOBOT_QQ}`,
-                json: {message: `${text}\n${desp}`},
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                timeout,
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('发送go-cqhttp通知调用API失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.retcode === 0) {
-                            console.log('go-cqhttp发送通知消息成功🎉\n');
-                        } else if (data.retcode === 100) {
-                            console.log(`go-cqhttp发送通知消息异常: ${data.errmsg}\n`);
-                        } else {
-                            console.log(`go-cqhttp发送通知消息异常\n${JSON.stringify(data)}`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    if (GOBOT_URL) {
+      const options = {
+        url: `${GOBOT_URL}?access_token=${GOBOT_TOKEN}&${GOBOT_QQ}`,
+        json: { message: `${text}\n${desp}` },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout,
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('发送go-cqhttp通知调用API失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.retcode === 0) {
+              console.log('go-cqhttp发送通知消息成功🎉\n');
+            } else if (data.retcode === 100) {
+              console.log(`go-cqhttp发送通知消息异常: ${data.errmsg}\n`);
+            } else {
+              console.log(`go-cqhttp发送通知消息异常\n${JSON.stringify(data)}`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function serverNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (SCKEY) {
-            //微信server酱推送通知一个\n不会换行，需要两个\n才能换行，故做此替换
-            desp = desp.replace(/[\n\r]/g, '\n\n');
-            const options = {
-                url: SCKEY.includes('SCT') ? `https://sctapi.ftqq.com/${SCKEY}.send` : `https://sc.ftqq.com/${SCKEY}.send`,
-                body: `text=${text}&desp=${desp}`,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                timeout,
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('发送通知调用API失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        //server酱和Server酱·Turbo版的返回json格式不太一样
-                        if (data.errno === 0 || data.data.errno === 0) {
-                            console.log('server酱发送通知消息成功🎉\n');
-                        } else if (data.errno === 1024) {
-                            // 一分钟内发送相同的内容会触发
-                            console.log(`server酱发送通知消息异常: ${data.errmsg}\n`);
-                        } else {
-                            console.log(`server酱发送通知消息异常\n${JSON.stringify(data)}`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    if (SCKEY) {
+      //微信server酱推送通知一个\n不会换行，需要两个\n才能换行，故做此替换
+      desp = desp.replace(/[\n\r]/g, '\n\n');
+      const options = {
+        url: SCKEY.includes('SCT') ? `https://sctapi.ftqq.com/${SCKEY}.send` : `https://sc.ftqq.com/${SCKEY}.send`,
+        body: `text=${text}&desp=${desp}`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        timeout,
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('发送通知调用API失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            //server酱和Server酱·Turbo版的返回json格式不太一样
+            if (data.errno === 0 || data.data.errno === 0) {
+              console.log('server酱发送通知消息成功🎉\n');
+            } else if (data.errno === 1024) {
+              // 一分钟内发送相同的内容会触发
+              console.log(`server酱发送通知消息异常: ${data.errmsg}\n`);
+            } else {
+              console.log(`server酱发送通知消息异常\n${JSON.stringify(data)}`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function PushDeerNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (PUSHDEER_KEY) {
-            // PushDeer 建议对消息内容进行 urlencode
-            desp = encodeURI(desp);
-            const options = {
-                url: PUSHDEER_URL || `https://api2.pushdeer.com/message/push`,
-                body: `pushkey=${PUSHDEER_KEY}&text=${text}&desp=${desp}&type=markdown`,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                timeout,
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('发送通知调用API失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        // 通过返回的result的长度来判断是否成功
-                        if (data.content.result.length !== undefined && data.content.result.length > 0) {
-                            console.log('PushDeer发送通知消息成功🎉\n');
-                        } else {
-                            console.log(`PushDeer发送通知消息异常\n${JSON.stringify(data)}`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    if (PUSHDEER_KEY) {
+      // PushDeer 建议对消息内容进行 urlencode
+      desp = encodeURI(desp);
+      const options = {
+        url: PUSHDEER_URL || `https://api2.pushdeer.com/message/push`,
+        body: `pushkey=${PUSHDEER_KEY}&text=${text}&desp=${desp}&type=markdown`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        timeout,
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('发送通知调用API失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            // 通过返回的result的长度来判断是否成功
+            if (data.content.result.length !== undefined && data.content.result.length > 0) {
+              console.log('PushDeer发送通知消息成功🎉\n');
+            } else {
+              console.log(`PushDeer发送通知消息异常\n${JSON.stringify(data)}`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function ChatNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (CHAT_URL && CHAT_TOKEN) {
-            // 对消息内容进行 urlencode
-            desp = encodeURI(desp);
-            const options = {
-                url: `${CHAT_URL}${CHAT_TOKEN}`, body: `payload={"text":"${text}\n${desp}"}`, headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('发送通知调用API失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.success) {
-                            console.log('Chat发送通知消息成功🎉\n');
-                        } else {
-                            console.log(`Chat发送通知消息异常\n${JSON.stringify(data)}`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    if (CHAT_URL && CHAT_TOKEN) {
+      // 对消息内容进行 urlencode
+      desp = encodeURI(desp);
+      const options = {
+        url: `${CHAT_URL}${CHAT_TOKEN}`,
+        body: `payload={"text":"${text}\n${desp}"}`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('发送通知调用API失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.success) {
+              console.log('Chat发送通知消息成功🎉\n');
+            } else {
+              console.log(`Chat发送通知消息异常\n${JSON.stringify(data)}`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function BarkNotify(text, desp, params = {}) {
-    return new Promise((resolve) => {
-        if (BARK_PUSH) {
-            const options = {
-                url: `${BARK_PUSH}/${encodeURIComponent(text)}/${encodeURIComponent(desp,)}?icon=${BARK_ICON}&sound=${BARK_SOUND}&group=${BARK_GROUP}&level=${BARK_LEVEL}&url=${BARK_URL}&${querystring.stringify(params,)}`,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                timeout,
-            };
-            $.get(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('Bark APP发送通知调用API失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.code === 200) {
-                            console.log('Bark APP发送通知消息成功🎉\n');
-                        } else {
-                            console.log(`${data.message}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve();
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    if (BARK_PUSH) {
+      const options = {
+        url: `${BARK_PUSH}/${encodeURIComponent(text)}/${encodeURIComponent(
+          desp,
+        )}?icon=${BARK_ICON}&sound=${BARK_SOUND}&group=${BARK_GROUP}&level=${BARK_LEVEL}&url=${BARK_URL}&${querystring.stringify(params)}`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        timeout,
+      };
+      $.get(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('Bark APP发送通知调用API失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.code === 200) {
+              console.log('Bark APP发送通知消息成功🎉\n');
+            } else {
+              console.log(`${data.message}\n`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve();
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function tgBotNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (TG_BOT_TOKEN && TG_USER_ID) {
-            const options = {
-                url: `https://${TG_API_HOST}/bot${TG_BOT_TOKEN}/sendMessage`, json: {
-                    chat_id: `${TG_USER_ID}`, text: `${text}\n\n${desp}`, disable_web_page_preview: true,
-                }, headers: {
-                    'Content-Type': 'application/json',
-                }, timeout,
-            };
-            if (TG_PROXY_HOST && TG_PROXY_PORT) {
-                const tunnel = require('tunnel');
-                const agent = {
-                    https: tunnel.httpsOverHttp({
-                        proxy: {
-                            host: TG_PROXY_HOST, port: TG_PROXY_PORT * 1, proxyAuth: TG_PROXY_AUTH,
-                        },
-                    }),
-                };
-                Object.assign(options, {agent});
+  return new Promise((resolve) => {
+    if (TG_BOT_TOKEN && TG_USER_ID) {
+      const options = {
+        url: `https://${TG_API_HOST}/bot${TG_BOT_TOKEN}/sendMessage`,
+        json: {
+          chat_id: `${TG_USER_ID}`,
+          text: `${text}\n\n${desp}`,
+          disable_web_page_preview: true,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout,
+      };
+      if (TG_PROXY_HOST && TG_PROXY_PORT) {
+        const tunnel = require('tunnel');
+        const agent = {
+          https: tunnel.httpsOverHttp({
+            proxy: {
+              host: TG_PROXY_HOST,
+              port: TG_PROXY_PORT * 1,
+              proxyAuth: TG_PROXY_AUTH,
+            },
+          }),
+        };
+        Object.assign(options, { agent });
+      }
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('telegram发送通知消息失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.ok) {
+              console.log('Telegram发送通知消息成功🎉。\n');
+            } else if (data.error_code === 400) {
+              console.log('请主动给bot发送一条消息并检查接收用户ID是否正确。\n');
+            } else if (data.error_code === 401) {
+              console.log('Telegram bot token 填写错误。\n');
             }
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('telegram发送通知消息失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.ok) {
-                            console.log('Telegram发送通知消息成功🎉。\n');
-                        } else if (data.error_code === 400) {
-                            console.log('请主动给bot发送一条消息并检查接收用户ID是否正确。\n',);
-                        } else if (data.error_code === 401) {
-                            console.log('Telegram bot token 填写错误。\n');
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function ddBotNotify(text, desp) {
-    return new Promise((resolve) => {
-        const options = {
-            url: `https://oapi.dingtalk.com/robot/send?access_token=${DD_BOT_TOKEN}`, json: {
-                msgtype: 'text', text: {
-                    content: `${text}\n\n${desp}`,
-                },
-            }, headers: {
-                'Content-Type': 'application/json',
-            }, timeout,
-        };
-        if (DD_BOT_TOKEN && DD_BOT_SECRET) {
-            const crypto = require('crypto');
-            const dateNow = Date.now();
-            const hmac = crypto.createHmac('sha256', DD_BOT_SECRET);
-            hmac.update(`${dateNow}\n${DD_BOT_SECRET}`);
-            const result = encodeURIComponent(hmac.digest('base64'));
-            options.url = `${options.url}&timestamp=${dateNow}&sign=${result}`;
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('钉钉发送通知消息失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.errcode === 0) {
-                            console.log('钉钉发送通知消息成功🎉。\n');
-                        } else {
-                            console.log(`${data.errmsg}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else if (DD_BOT_TOKEN) {
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('钉钉发送通知消息失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.errcode === 0) {
-                            console.log('钉钉发送通知消息完成。\n');
-                        } else {
-                            console.log(`${data.errmsg}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    const options = {
+      url: `https://oapi.dingtalk.com/robot/send?access_token=${DD_BOT_TOKEN}`,
+      json: {
+        msgtype: 'text',
+        text: {
+          content: `${text}\n\n${desp}`,
+        },
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout,
+    };
+    if (DD_BOT_TOKEN && DD_BOT_SECRET) {
+      const crypto = require('crypto');
+      const dateNow = Date.now();
+      const hmac = crypto.createHmac('sha256', DD_BOT_SECRET);
+      hmac.update(`${dateNow}\n${DD_BOT_SECRET}`);
+      const result = encodeURIComponent(hmac.digest('base64'));
+      options.url = `${options.url}&timestamp=${dateNow}&sign=${result}`;
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('钉钉发送通知消息失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.errcode === 0) {
+              console.log('钉钉发送通知消息成功🎉。\n');
+            } else {
+              console.log(`${data.errmsg}\n`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else if (DD_BOT_TOKEN) {
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('钉钉发送通知消息失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.errcode === 0) {
+              console.log('钉钉发送通知消息完成。\n');
+            } else {
+              console.log(`${data.errmsg}\n`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
+        }
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function qywxBotNotify(text, desp) {
-    return new Promise((resolve) => {
-        const options = {
-            url: `${QYWX_ORIGIN}/cgi-bin/webhook/send?key=${QYWX_KEY}`, json: {
-                msgtype: 'text', text: {
-                    content: `${text}\n\n${desp}`,
-                },
-            }, headers: {
-                'Content-Type': 'application/json',
-            }, timeout,
-        };
-        if (QYWX_KEY) {
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('企业微信发送通知消息失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.errcode === 0) {
-                            console.log('企业微信发送通知消息成功🎉。\n');
-                        } else {
-                            console.log(`${data.errmsg}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    const options = {
+      url: `${QYWX_ORIGIN}/cgi-bin/webhook/send?key=${QYWX_KEY}`,
+      json: {
+        msgtype: 'text',
+        text: {
+          content: `${text}\n\n${desp}`,
+        },
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout,
+    };
+    if (QYWX_KEY) {
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('企业微信发送通知消息失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.errcode === 0) {
+              console.log('企业微信发送通知消息成功🎉。\n');
+            } else {
+              console.log(`${data.errmsg}\n`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function ChangeUserId(desp) {
-    const QYWX_AM_AY = QYWX_AM.split(',');
-    if (QYWX_AM_AY[2]) {
-        const userIdTmp = QYWX_AM_AY[2].split('|');
-        let userId = '';
-        for (let i = 0; i < userIdTmp.length; i++) {
-            const count = '账号' + (i + 1);
-            const count2 = '签到号 ' + (i + 1);
-            if (desp.match(count2)) {
-                userId = userIdTmp[i];
-            }
-        }
-        if (!userId) userId = QYWX_AM_AY[2];
-        return userId;
-    } else {
-        return '@all';
+  const QYWX_AM_AY = QYWX_AM.split(',');
+  if (QYWX_AM_AY[2]) {
+    const userIdTmp = QYWX_AM_AY[2].split('|');
+    let userId = '';
+    for (let i = 0; i < userIdTmp.length; i++) {
+      const count = '账号' + (i + 1);
+      const count2 = '签到号 ' + (i + 1);
+      if (desp.match(count2)) {
+        userId = userIdTmp[i];
+      }
     }
+    if (!userId) userId = QYWX_AM_AY[2];
+    return userId;
+  } else {
+    return '@all';
+  }
 }
 
 function qywxamNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (QYWX_AM) {
-            const QYWX_AM_AY = QYWX_AM.split(',');
-            const options_accesstoken = {
-                url: `${QYWX_ORIGIN}/cgi-bin/gettoken`, json: {
-                    corpid: `${QYWX_AM_AY[0]}`, corpsecret: `${QYWX_AM_AY[1]}`,
-                }, headers: {
-                    'Content-Type': 'application/json',
-                }, timeout,
+  return new Promise((resolve) => {
+    if (QYWX_AM) {
+      const QYWX_AM_AY = QYWX_AM.split(',');
+      const options_accesstoken = {
+        url: `${QYWX_ORIGIN}/cgi-bin/gettoken`,
+        json: {
+          corpid: `${QYWX_AM_AY[0]}`,
+          corpsecret: `${QYWX_AM_AY[1]}`,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout,
+      };
+      $.post(options_accesstoken, (err, resp, data) => {
+        let html = desp.replace(/\n/g, '<br/>');
+        let json = JSON.parse(data);
+        let accesstoken = json.access_token;
+        let options;
+
+        switch (QYWX_AM_AY[4]) {
+          case '0':
+            options = {
+              msgtype: 'textcard',
+              textcard: {
+                title: `${text}`,
+                description: `${desp}`,
+                url: 'https://github.com/whyour/qinglong',
+                btntxt: '更多',
+              },
             };
-            $.post(options_accesstoken, (err, resp, data) => {
-                let html = desp.replace(/\n/g, '<br/>');
-                let json = JSON.parse(data);
-                let accesstoken = json.access_token;
-                let options;
+            break;
 
-                switch (QYWX_AM_AY[4]) {
-                    case '0':
-                        options = {
-                            msgtype: 'textcard', textcard: {
-                                title: `${text}`,
-                                description: `${desp}`,
-                                url: 'https://github.com/whyour/qinglong',
-                                btntxt: '更多',
-                            },
-                        };
-                        break;
+          case '1':
+            options = {
+              msgtype: 'text',
+              text: {
+                content: `${text}\n\n${desp}`,
+              },
+            };
+            break;
 
-                    case '1':
-                        options = {
-                            msgtype: 'text', text: {
-                                content: `${text}\n\n${desp}`,
-                            },
-                        };
-                        break;
-
-                    default:
-                        options = {
-                            msgtype: 'mpnews', mpnews: {
-                                articles: [{
-                                    title: `${text}`,
-                                    thumb_media_id: `${QYWX_AM_AY[4]}`,
-                                    author: `智能助手`,
-                                    content_source_url: ``,
-                                    content: `${html}`,
-                                    digest: `${desp}`,
-                                },],
-                            },
-                        };
-                }
-                if (!QYWX_AM_AY[4]) {
-                    //如不提供第四个参数,则默认进行文本消息类型推送
-                    options = {
-                        msgtype: 'text', text: {
-                            content: `${text}\n\n${desp}`,
-                        },
-                    };
-                }
-                options = {
-                    url: `${QYWX_ORIGIN}/cgi-bin/message/send?access_token=${accesstoken}`, json: {
-                        touser: `${ChangeUserId(desp)}`, agentid: `${QYWX_AM_AY[3]}`, safe: '0', ...options,
-                    }, headers: {
-                        'Content-Type': 'application/json',
-                    },
-                };
-
-                $.post(options, (err, resp, data) => {
-                    try {
-                        if (err) {
-                            console.log('成员ID:' + ChangeUserId(desp) + '企业微信应用消息发送通知消息失败！！\n',);
-                            console.log(err);
-                        } else {
-                            data = JSON.parse(data);
-                            if (data.errcode === 0) {
-                                console.log('成员ID:' + ChangeUserId(desp) + '企业微信应用消息发送通知消息成功🎉。\n',);
-                            } else {
-                                console.log(`${data.errmsg}\n`);
-                            }
-                        }
-                    } catch (e) {
-                        $.logErr(e, resp);
-                    } finally {
-                        resolve(data);
-                    }
-                });
-            });
-        } else {
-            resolve();
+          default:
+            options = {
+              msgtype: 'mpnews',
+              mpnews: {
+                articles: [
+                  {
+                    title: `${text}`,
+                    thumb_media_id: `${QYWX_AM_AY[4]}`,
+                    author: `智能助手`,
+                    content_source_url: ``,
+                    content: `${html}`,
+                    digest: `${desp}`,
+                  },
+                ],
+              },
+            };
         }
-    });
+        if (!QYWX_AM_AY[4]) {
+          //如不提供第四个参数,则默认进行文本消息类型推送
+          options = {
+            msgtype: 'text',
+            text: {
+              content: `${text}\n\n${desp}`,
+            },
+          };
+        }
+        options = {
+          url: `${QYWX_ORIGIN}/cgi-bin/message/send?access_token=${accesstoken}`,
+          json: {
+            touser: `${ChangeUserId(desp)}`,
+            agentid: `${QYWX_AM_AY[3]}`,
+            safe: '0',
+            ...options,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        };
+
+        $.post(options, (err, resp, data) => {
+          try {
+            if (err) {
+              console.log('成员ID:' + ChangeUserId(desp) + '企业微信应用消息发送通知消息失败！！\n');
+              console.log(err);
+            } else {
+              data = JSON.parse(data);
+              if (data.errcode === 0) {
+                console.log('成员ID:' + ChangeUserId(desp) + '企业微信应用消息发送通知消息成功🎉。\n');
+              } else {
+                console.log(`${data.errmsg}\n`);
+              }
+            }
+          } catch (e) {
+            $.logErr(e, resp);
+          } finally {
+            resolve(data);
+          }
+        });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function iGotNotify(text, desp, params = {}) {
-    return new Promise((resolve) => {
-        if (IGOT_PUSH_KEY) {
-            // 校验传入的IGOT_PUSH_KEY是否有效
-            const IGOT_PUSH_KEY_REGX = new RegExp('^[a-zA-Z0-9]{24}$');
-            if (!IGOT_PUSH_KEY_REGX.test(IGOT_PUSH_KEY)) {
-                console.log('您所提供的IGOT_PUSH_KEY无效\n');
-                resolve();
-                return;
+  return new Promise((resolve) => {
+    if (IGOT_PUSH_KEY) {
+      // 校验传入的IGOT_PUSH_KEY是否有效
+      const IGOT_PUSH_KEY_REGX = new RegExp('^[a-zA-Z0-9]{24}$');
+      if (!IGOT_PUSH_KEY_REGX.test(IGOT_PUSH_KEY)) {
+        console.log('您所提供的IGOT_PUSH_KEY无效\n');
+        resolve();
+        return;
+      }
+      const options = {
+        url: `https://push.hellyw.com/${IGOT_PUSH_KEY.toLowerCase()}`,
+        body: `title=${text}&content=${desp}&${querystring.stringify(params)}`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        timeout,
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('发送通知调用API失败！！\n');
+            console.log(err);
+          } else {
+            if (typeof data === 'string') data = JSON.parse(data);
+            if (data.ret === 0) {
+              console.log('iGot发送通知消息成功🎉\n');
+            } else {
+              console.log(`iGot发送通知消息失败：${data.errMsg}\n`);
             }
-            const options = {
-                url: `https://push.hellyw.com/${IGOT_PUSH_KEY.toLowerCase()}`,
-                body: `title=${text}&content=${desp}&${querystring.stringify(params)}`,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                timeout,
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('发送通知调用API失败！！\n');
-                        console.log(err);
-                    } else {
-                        if (typeof data === 'string') data = JSON.parse(data);
-                        if (data.ret === 0) {
-                            console.log('iGot发送通知消息成功🎉\n');
-                        } else {
-                            console.log(`iGot发送通知消息失败：${data.errMsg}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function pushPlusNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (PUSH_PLUS_TOKEN) {
-            desp = desp.replace(/[\n\r]/g, '<br>'); // 默认为html, 不支持plaintext
-            const body = {
-                token: `${PUSH_PLUS_TOKEN}`, title: `${text}`, content: `${desp}`, topic: `${PUSH_PLUS_USER}`,
-            };
-            const options = {
-                url: `https://www.pushplus.plus/send`, body: JSON.stringify(body), headers: {
-                    'Content-Type': ' application/json',
-                }, timeout,
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息失败！！\n`,);
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.code === 200) {
-                            console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息完成。\n`,);
-                        } else {
-                            console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息失败：${data.msg}\n`,);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    if (PUSH_PLUS_TOKEN) {
+      desp = desp.replace(/[\n\r]/g, '<br>'); // 默认为html, 不支持plaintext
+      const body = {
+        token: `${PUSH_PLUS_TOKEN}`,
+        title: `${text}`,
+        content: `${desp}`,
+        topic: `${PUSH_PLUS_USER}`,
+      };
+      const options = {
+        url: `https://www.pushplus.plus/send`,
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': ' application/json',
+        },
+        timeout,
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息失败！！\n`);
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.code === 200) {
+              console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息完成。\n`);
+            } else {
+              console.log(`push+发送${PUSH_PLUS_USER ? '一对多' : '一对一'}通知消息失败：${data.msg}\n`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function aibotkNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (AIBOTK_KEY && AIBOTK_TYPE && AIBOTK_NAME) {
-            let json = {};
-            let url = '';
-            switch (AIBOTK_TYPE) {
-                case 'room':
-                    url = 'https://api-bot.aibotk.com/openapi/v1/chat/room';
-                    json = {
-                        apiKey: `${AIBOTK_KEY}`, roomName: `${AIBOTK_NAME}`, message: {
-                            type: 1, content: `【青龙快讯】\n\n${text}\n${desp}`,
-                        },
-                    };
-                    break;
-                case 'contact':
-                    url = 'https://api-bot.aibotk.com/openapi/v1/chat/contact';
-                    json = {
-                        apiKey: `${AIBOTK_KEY}`, name: `${AIBOTK_NAME}`, message: {
-                            type: 1, content: `【青龙快讯】\n\n${text}\n${desp}`,
-                        },
-                    };
-                    break;
+  return new Promise((resolve) => {
+    if (AIBOTK_KEY && AIBOTK_TYPE && AIBOTK_NAME) {
+      let json = {};
+      let url = '';
+      switch (AIBOTK_TYPE) {
+        case 'room':
+          url = 'https://api-bot.aibotk.com/openapi/v1/chat/room';
+          json = {
+            apiKey: `${AIBOTK_KEY}`,
+            roomName: `${AIBOTK_NAME}`,
+            message: {
+              type: 1,
+              content: `【青龙快讯】\n\n${text}\n${desp}`,
+            },
+          };
+          break;
+        case 'contact':
+          url = 'https://api-bot.aibotk.com/openapi/v1/chat/contact';
+          json = {
+            apiKey: `${AIBOTK_KEY}`,
+            name: `${AIBOTK_NAME}`,
+            message: {
+              type: 1,
+              content: `【青龙快讯】\n\n${text}\n${desp}`,
+            },
+          };
+          break;
+      }
+      const options = {
+        url: url,
+        json,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout,
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('智能微秘书发送通知消息失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.code === 0) {
+              console.log('智能微秘书发送通知消息成功🎉。\n');
+            } else {
+              console.log(`${data.error}\n`);
             }
-            const options = {
-                url: url, json, headers: {
-                    'Content-Type': 'application/json',
-                }, timeout,
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('智能微秘书发送通知消息失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.code === 0) {
-                            console.log('智能微秘书发送通知消息成功🎉。\n');
-                        } else {
-                            console.log(`${data.error}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 function fsBotNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (FSKEY) {
-            const options = {
-                url: `https://open.feishu.cn/open-apis/bot/v2/hook/${FSKEY}`,
-                json: {msg_type: 'text', content: {text: `${text}\n\n${desp}`}},
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                timeout,
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('发送通知调用API失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.StatusCode === 0) {
-                            console.log('飞书发送通知消息成功🎉\n');
-                        } else {
-                            console.log(`${data.msg}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    if (FSKEY) {
+      const options = {
+        url: `https://open.feishu.cn/open-apis/bot/v2/hook/${FSKEY}`,
+        json: { msg_type: 'text', content: { text: `${text}\n\n${desp}` } },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout,
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('发送通知调用API失败！！\n');
+            console.log(err);
+          } else {
+            data = JSON.parse(data);
+            if (data.StatusCode === 0) {
+              console.log('飞书发送通知消息成功🎉\n');
+            } else {
+              console.log(`${data.msg}\n`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 async function smtpNotify(text, desp) {
-    if (![SMTP_SERVER, SMTP_EMAIL, SMTP_PASSWORD].every(Boolean)) {
-        return;
+  if (![SMTP_SERVER, SMTP_EMAIL, SMTP_PASSWORD].every(Boolean)) {
+    return;
+  }
+
+  try {
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport(`${SMTP_SSL === 'true' ? 'smtps:' : 'smtp:'}//${SMTP_SERVER}`, {
+      auth: {
+        user: SMTP_EMAIL,
+        pass: SMTP_PASSWORD,
+      },
+    });
+
+    const addr = SMTP_NAME ? `"${SMTP_NAME}" <${SMTP_EMAIL}>` : SMTP_EMAIL;
+    const info = await transporter.sendMail({
+      from: addr,
+      to: addr,
+      subject: text,
+      text: desp,
+    });
+
+    if (!!info.messageId) {
+      console.log('SMTP发送通知消息成功🎉\n');
+      return true;
     }
-
-    try {
-        const nodemailer = require('nodemailer');
-        const transporter = nodemailer.createTransport(`${SMTP_SSL === 'true' ? 'smtps:' : 'smtp:'}//${SMTP_SERVER}`, {
-            auth: {
-                user: SMTP_EMAIL, pass: SMTP_PASSWORD,
-            },
-        },);
-
-        const addr = SMTP_NAME ? `"${SMTP_NAME}" <${SMTP_EMAIL}>` : SMTP_EMAIL;
-        const info = await transporter.sendMail({
-            from: addr, to: addr, subject: text, text: desp,
-        });
-
-        if (!!info.messageId) {
-            console.log('SMTP发送通知消息成功🎉\n');
-            return true;
-        }
-        console.log('SMTP发送通知消息失败！！\n');
-    } catch (e) {
-        console.log('SMTP发送通知消息出现错误！！\n');
-        console.log(e);
-    }
+    console.log('SMTP发送通知消息失败！！\n');
+  } catch (e) {
+    console.log('SMTP发送通知消息出现错误！！\n');
+    console.log(e);
+  }
 }
 
 function smtpNotify(text, desp) {
-    return new Promise((resolve) => {
-        if (SMTP_SERVER && SMTP_SSL && SMTP_EMAIL && SMTP_PASSWORD && SMTP_NAME) {
-            // todo: Node.js并没有内置的 smtp 实现，需要调用外部库，因为不清楚这个文件的模块依赖情况，所以留给有缘人实现
-        } else {
-            resolve();
-        }
-    });
+  return new Promise((resolve) => {
+    if (SMTP_SERVER && SMTP_SSL && SMTP_EMAIL && SMTP_PASSWORD && SMTP_NAME) {
+      // todo: Node.js并没有内置的 smtp 实现，需要调用外部库，因为不清楚这个文件的模块依赖情况，所以留给有缘人实现
+    } else {
+      resolve();
+    }
+  });
 }
 
 function PushMeNotify(text, desp, params = {}) {
-    return new Promise((resolve) => {
-        if (PUSHME_KEY) {
-            const options = {
-                url: `https://push.i-i.me?push_key=${PUSHME_KEY}`,
-                json: {title: text, content: desp, ...params},
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                timeout,
-            };
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('PushMeNotify发送通知调用API失败！！\n');
-                        console.log(err);
-                    } else {
-                        if (data === 'success') {
-                            console.log('PushMe发送通知消息成功🎉\n');
-                        } else {
-                            console.log(`${data}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
-        } else {
-            resolve();
+  return new Promise((resolve) => {
+    if (PUSHME_KEY) {
+      const options = {
+        url: `https://push.i-i.me?push_key=${PUSHME_KEY}`,
+        json: { title: text, content: desp, ...params },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout,
+      };
+      $.post(options, (err, resp, data) => {
+        try {
+          if (err) {
+            console.log('PushMeNotify发送通知调用API失败！！\n');
+            console.log(err);
+          } else {
+            if (data === 'success') {
+              console.log('PushMe发送通知消息成功🎉\n');
+            } else {
+              console.log(`${data}\n`);
+            }
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
         }
-    });
+      });
+    } else {
+      resolve();
+    }
+  });
 }
 
 module.exports = {
-    sendNotify, BARK_PUSH,
+  sendNotify,
+  BARK_PUSH,
 };
 
 // prettier-ignore
